@@ -1,0 +1,12 @@
+prompt: |
+  <PLACEHOLDER>
+
+metadata:
+  difficulty: "medium"
+  category: "imputation"
+  tags:
+    - imputation
+    - missing-data
+    - tabular
+    - covertype
+  references: "Covertype (Blackard & Dean, 1999), UCI ML Repository id=31"
