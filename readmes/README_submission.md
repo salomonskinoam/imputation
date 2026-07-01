@@ -24,8 +24,9 @@ design, internal-run comparison, solution diversity, coordinates) is one file un
   and README_general_direction §13). `best_observed = 1` → raw scores; read absolute recovery vs the
   reference imputer, not just the spread.
 - **Model:** every eval uses **biggie-max-polara**, agent-type **meteor**, hosted (see `CLAUDE.md`).
-  5 runs of one model measure consistency + strategy variation, NOT a weak→strong skill band; a real
-  band would require multiple model tiers, which we do not run.
+  Each rollout is a different solution the model writes, so the multi-run spread IS biggie's skill band
+  on the task (README_general_direction §3). A weak→strong model sweep would widen it, but we only run
+  biggie, so biggie's band is the band. (Distinct from re-run σ, re-scoring one fixed solution.)
 - **Handshake:** code-only, test hidden (deferred `train_at_grade`) — the agent never sees the test;
   the grader re-runs the submitted `solution.py` on the full held-out test at grade. Downloaded runs
   live in [`analysis/<eval_id>/`](../analysis/) as `runN_<score>.{py,json}` + `_transcript.md`.

@@ -57,6 +57,7 @@ So the ~0.11 run-to-run spread is driven by genuine imputation-method quality, n
 ## Verdict
 
 **WORKS / submit = YES.** The task discriminates on real imputation craft and real agents beat the
-reference imputer. Caveat (per the biggie-only eval rule): 5 runs of one model measure consistency +
-strategy variation, not a weak→strong skill band; treat the spread as method-driven variation, and
-read absolute recovery vs the 0.26 reference.
+reference imputer. The 0.27–0.39 spread across the 5 runs IS biggie's skill band on the task (each run
+is a different solution, not a seed re-run). A weak→strong model sweep would widen it; we only run
+biggie, so this is the band. (Re-run σ — re-scoring one fixed solution — is a separate resolution
+ruler, not measured here.)

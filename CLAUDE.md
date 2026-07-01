@@ -27,8 +27,9 @@ paths, prehook, prompt_builder, active, Dockerfile, data/*.npz`), `tasks_def/` (
 - Agent-type: always **`meteor`** (`--agent-type meteor`), hosted.
 - Machine: `e2-custom-16-32768` (16 vCPU / 32 GB). Command:
   `horizon evaluations submit <task-id> --runs N --model biggie-max-polara --agent-type meteor --machine-type e2-custom-16-32768 --json`
-- Note: 5 runs of one model measures run-to-run NOISE, not the skill band. Read absolute recovery
-  scores and their consistency; do not call same-model spread a "band".
+- Note: each rollout is a DIFFERENT solution the model writes, so the multi-run score spread IS that
+  model's skill band on the task (biggie's band). Do NOT call it noise. Re-run NOISE (σ) is a separate
+  thing: re-scoring ONE fixed solution across seeds (~0 for pinned seeds) — the resolution ruler only.
 
 ## Oracle changes need approval
 
