@@ -43,17 +43,31 @@ HGB-MICE reference (0.26), with clear headroom to 1.0.
 
 ## Resolution (how many separable levels)
 
-Per SDK `noise_floor.md` (`tiers = 1 + width / LSD`, `LSD = z·√2·σ`). Our score is an RMSE-ratio, not
-F1, so σ is **measured empirically by bootstrapping test rows** (500×) rather than F1's `sqrt(v/N)` —
-same noise source (test-set resampling), metric-appropriate statistic. Rows are iid (no blocks).
+Per SDK `noise_floor.md` (`tiers = 1 + width/LSD`, `LSD = z·√2·σ`). Noise source = the SDK's binding
+one: **test-set resampling** (seeds are pinned → re-run noise ≈0). In §14 terms our score is a
+**"sample" channel, scope "shared"** (method + naive baseline scored on the same resampled cells), so
+σ sharpens as 1/√N. Only the statistic differs from F1, so we derive its own `v`.
 
-- σ ≈ **0.0038** per run (tiny; N_test=30,000 sharpens it as 1/√N). LSD(z=2) ≈ **0.011**.
-- **Capacity ≈ 12 levels** across the realized band (0.27→0.385), ≈ 37 across [0, best].
-- **Realized: the 5 runs resolve into 4 distinct tiers** (flip-rates 0.00 except run3≈run4 = 0.37):
-  {run5 0.269} < {run3 0.299 ≈ run4 0.300} < {run1 0.377} < {run2 0.385}.
+**Closed-form bound (from the number of amputed values).** The "values" are the amputed cells per
+column `m = rate·N_test ≈ 15,000`. With per-cell squared error `a_i` (mean = MSE) and κ_e = kurtosis of
+the per-cell error (measured ≈ 3–5, avg ~4), CLT + delta method (naive denominator held fixed →
+conservative) give, per column:
 
-So biggie's band is ~11 LSDs wide and holds ~12 resolvable rungs; the 5 observed solutions already
-occupy 4 of them. (`scratchpad/tiers_direct.py`.)
+    σ(skill_c) ≤ (1 − skill_c)/2 · sqrt((κ_e − 1)/m)      [ = SDK sqrt(v/N): N=m, v=(1−skill)²(κ_e−1)/4 ]
+
+so **σ ∝ 1/√(rate·N_test)**. Plug width=0.115, m=15k, z=2, skill≈0.33: κ_e=4 → σ≈0.0047 → **≈10 tiers
+(floor)**; κ_e=3 → σ≈0.0039 → ≈12.
+
+**Empirical check (bootstrap test rows, 500×, metric-exact):** σ = **0.0038** → LSD(z=2)=0.011 →
+**≈12 tiers** across the realized band (≈37 across [0,best]). Sits at/above the closed-form floor; the
+gap is the denominator-pairing variance the bound conservatively drops.
+
+**Realized: the 5 runs resolve into 4 distinct tiers** (adjacent flip-rates 0.00 except run3≈run4 =
+0.37): {run5 0.269} < {run3 0.299 ≈ run4 0.300} < {run1 0.377} < {run2 0.385}.
+
+**Bottom line:** ~10–12 separable levels, set by √(rate·N_test); biggie already spans 4. Lever: test
+cells grow with K² to resolve K levels (`m ≳ ((K−1)·z·(1−skill)/W)²·(κ_e−1)/2`). Code:
+`scratchpad/tiers_direct.py`.
 
 ## Solution diversity / what separated skill
 
