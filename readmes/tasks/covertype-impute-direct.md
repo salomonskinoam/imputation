@@ -41,6 +41,20 @@ HGB-MICE reference (0.26), with clear headroom to 1.0.
 | 3 | 0.299 | single HGB | MICE ×5 | yes | no | iterative refit, no ensemble |
 | 5 | 0.271 | HGB ×5 seeds, averaged | single | **no** (inductive: fit on train only) | yes (label as NaN-aware column) | only non-pooling run |
 
+## Resolution (how many separable levels)
+
+Per SDK `noise_floor.md` (`tiers = 1 + width / LSD`, `LSD = z·√2·σ`). Our score is an RMSE-ratio, not
+F1, so σ is **measured empirically by bootstrapping test rows** (500×) rather than F1's `sqrt(v/N)` —
+same noise source (test-set resampling), metric-appropriate statistic. Rows are iid (no blocks).
+
+- σ ≈ **0.0038** per run (tiny; N_test=30,000 sharpens it as 1/√N). LSD(z=2) ≈ **0.011**.
+- **Capacity ≈ 12 levels** across the realized band (0.27→0.385), ≈ 37 across [0, best].
+- **Realized: the 5 runs resolve into 4 distinct tiers** (flip-rates 0.00 except run3≈run4 = 0.37):
+  {run5 0.269} < {run3 0.299 ≈ run4 0.300} < {run1 0.377} < {run2 0.385}.
+
+So biggie's band is ~11 LSDs wide and holds ~12 resolvable rungs; the 5 observed solutions already
+occupy 4 of them. (`scratchpad/tiers_direct.py`.)
+
 ## Solution diversity / what separated skill
 
 - **Ensemble diversity won.** The top two averaged different tree families (HGB + RF + ExtraTrees);
