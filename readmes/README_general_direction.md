@@ -379,3 +379,41 @@ MICE-linear, MICE-HGB, MICE-HGB+standardize, clean-oracle} — under **each NaN-
 co-amputate, #2 MNAR self-mask, and combos)**, with the **grader standardizing**, and measure the downstream spread
 (plus the direct-recovery spread as reference). Pick the amputation(s) that yield the widest **monotone**
 spread **without floor-collapse**. Only then rebuild the task.
+
+## 13. Direction A WORKS — the direct-recovery task (covertype-impute-direct)
+
+We built and shipped Direction A: `covertype-impute-direct` (task_id
+`ff227290-a39d-4cf8-a162-4d79b580743f`). Handshake = **code-only, test hidden** (deferred; the agent
+sees only training data during the rollout, `test_features` is a 0-row placeholder; the grader re-runs
+the submitted `solution.py` on the full held-out test at grade). Score = imputation recovery on the
+amputed TEST cells vs truth: mean over amputed columns of `1 − RMSE(method)/RMSE(naive mean-fill)`,
+clamped [0,1] (0 = mean-fill, 1 = perfect).
+
+**First eval (biggie-max-polara, 5 runs, eval `c56b6c86`):** 5/5 graded, 0 errored. Recovery
+**0.27–0.39, mean 0.326, std 0.046** — real agents BEAT our HGB-MICE reference (0.26), with clear
+headroom to 1.0. The task **discriminates on real imputation craft** (a genuine ~0.11 method-driven
+spread across runs):
+
+| run | recovery | what it did (differences) |
+|---|---|---|
+| 2 | 0.385 | 2×HGB (diff leaves/L2) + RandomForest, averaged; single pass |
+| 1 | 0.377 | ExtraTrees + RF + HGB weighted ensemble; single sweep |
+| 4 | 0.301 | single HGB, MICE 6 iters, + uses labels (one-hot train + predicted test class-probs) |
+| 3 | 0.299 | single HGB, MICE 5 iters |
+| 5 | 0.271 | HGB×5 seeds, single pass, + label column; ONLY run that does not pool test (inductive fit) |
+
+Lessons from the submissions: **ensemble diversity won** (top two averaged ExtraTrees/RF/HGB);
+**MICE iteration didn't help** vs a strong single-pass ensemble; **using the labels didn't help**
+(both label-users landed at the bottom); **transductive pooling of train+test *features* helped** (the
+one inductive run scored lowest).
+
+**On "train+test pooling" and test visibility (NOT a leak):** the agent never sees the test set — it is
+0 rows during the rollout, and test *labels* never exist in `/data_agent`. "Pooling" is what the
+submitted CODE does when the grader runs it at grade time: to impute the test's missing cells the code
+must read the test *features*, and several submissions concatenate train+test feature matrices to give
+the imputation regressor more rows. Features only, no labels, and nothing the agent memorized. A stricter
+"inductive only" variant (fit on train, apply to test, no cross-test sharing) is possible but is a
+design preference, not a leak fix.
+
+**Conclusion: Direction A is the working flagship.** Direction B (downstream) stays parked (§12 / B0).
+Per-eval analysis: `analysis/<eval_id>/`; submission index: `submissions/`.

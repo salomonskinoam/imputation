@@ -1,0 +1,62 @@
+# covertype-impute-direct — analysis
+
+Direct imputation-recovery task (Direction A). The student writes code that fills the missing cells;
+the grader scores the recovered TEST cells against the true values. This is the working flagship of
+the imputation world.
+
+## Coordinates
+
+- **task_id:** `ff227290-a39d-4cf8-a162-4d79b580743f` (version 2)
+- **eval_id:** `c56b6c86-36e5-45da-9f9b-8d40ae038f2b` (biggie-max-polara, agent-type meteor, 5 runs)
+- **batch:** `0067d7a3-4134-40d9-a4eb-c29faeeb24fe`
+- **task page:** https://horizon.bespokelabs.ai/tasks/ff227290-a39d-4cf8-a162-4d79b580743f
+- **run page:** https://horizon.bespokelabs.ai/evaluations/c56b6c86-36e5-45da-9f9b-8d40ae038f2b
+- **downloaded runs:** [`analysis/c56b6c86-36e5-45da-9f9b-8d40ae038f2b/`](../../analysis/c56b6c86-36e5-45da-9f9b-8d40ae038f2b/)
+  (`runN_<score>.py` + `.json` + `_transcript.md`)
+
+## Task design
+
+- **Dataset:** Covertype (UCI id=31), 54 cartographic features, subsampled train 5,000 / test 30,000.
+- **Amputation:** MAR (P(missing) ∝ observed `Slope` rank), rate 0.5, on the 3 top-MI numeric columns
+  `Elevation`, `Horizontal_Distance_To_Roadways`, `Horizontal_Distance_To_Fire_Points` (NaN deletion).
+- **Handshake:** code-only, test hidden. Deferred (`train_at_grade`): during the rollout the agent sees
+  only training data; `test_features.npy` is a 0-row placeholder; test labels never exist agent-side.
+  At grade the grader reveals the full corrupted test and re-runs the submitted `solution.py`.
+- **Scoring (direct):** on the amputed TEST cells, `score = mean over amputed columns of
+  clamp(1 − RMSE(method)/RMSE(naive mean-fill), 0, 1)`. 0 = no better than a column-mean fill,
+  1 = perfect recovery. `best_observed = 1` (raw scores). Reference HGB-MICE oracle ≈ 0.26.
+
+## Result
+
+5/5 graded, 0 errored. Recovery **0.271 – 0.385, mean 0.326, std 0.046** — real agents beat the
+HGB-MICE reference (0.26), with clear headroom to 1.0.
+
+## Internal-run comparison
+
+| run | recovery | regressor(s) | passes | pools test features | uses labels | distinctive |
+|---|---|---|---|---|---|---|
+| 2 | 0.385 | 2×HGB (diff leaves/L2) + RandomForest, averaged | single | yes | no | diverse ensemble, one shot |
+| 1 | 0.377 | ExtraTrees + RF + HGB, weighted 0.5/0.25/0.25 | single sweep | yes | no | 3-family weighted ensemble |
+| 4 | 0.301 | single HGB reg + HGB classifier | MICE ×6 | yes | yes (one-hot train + predicted test class-probs) | injects label signal, iterates |
+| 3 | 0.299 | single HGB | MICE ×5 | yes | no | iterative refit, no ensemble |
+| 5 | 0.271 | HGB ×5 seeds, averaged | single | **no** (inductive: fit on train only) | yes (label as NaN-aware column) | only non-pooling run |
+
+## Solution diversity / what separated skill
+
+- **Ensemble diversity won.** The top two averaged different tree families (HGB + RF + ExtraTrees);
+  the single-HGB runs scored ~0.08 lower.
+- **MICE iteration did not help** vs a strong single-pass ensemble (runs 3, 4 lost to 1, 2).
+- **Using the labels did not help** — both label-users (4, 5) landed at the bottom; imputing features
+  from features was enough, and the label block added noise/overfitting.
+- **Transductive pooling of train+test *features* helped** — the one inductive run (5) scored lowest.
+  (Not a leak: features only, no labels; the agent never saw the test — pooling happens only when the
+  grader runs the code at grade time.)
+
+So the ~0.11 run-to-run spread is driven by genuine imputation-method quality, not numeric fiddling.
+
+## Verdict
+
+**WORKS / submit = YES.** The task discriminates on real imputation craft and real agents beat the
+reference imputer. Caveat (per the biggie-only eval rule): 5 runs of one model measure consistency +
+strategy variation, not a weak→strong skill band; treat the spread as method-driven variation, and
+read absolute recovery vs the 0.26 reference.
