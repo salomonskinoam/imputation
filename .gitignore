@@ -219,3 +219,9 @@ __marimo__/
 
 # Horizon venv (holds the API key in activate)
 horizon_env/
+
+# Local name->server-task-id map (per CREATING_A_WORLD.md)
+.horizon-local/
+
+# Throwaway experiments / calibration scripts + scratch data
+scratchpad/
