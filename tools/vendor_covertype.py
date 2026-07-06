@@ -18,9 +18,10 @@ from pathlib import Path
 
 import numpy as np
 
-N_KEEP = 60_000
+N_KEEP = int(sys.argv[1]) if len(sys.argv) > 1 else 60_000
 SEED = 0
-OUT = Path(__file__).resolve().parent.parent / "worlds" / "imputation" / "data" / "covertype.npz"
+_OUT_NAME = sys.argv[2] if len(sys.argv) > 2 else "covertype.npz"
+OUT = Path(__file__).resolve().parent.parent / "worlds" / "imputation" / "data" / _OUT_NAME
 
 
 def main() -> None:
