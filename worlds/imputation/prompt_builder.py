@@ -95,10 +95,22 @@ class PromptBuilder:
         mode = getattr(self.cfg, "scoring_mode", "downstream")
         n_features = getattr(self.cfg, "n_features", 54)
         classes = ", ".join(f"{i}={c}" for i, c in enumerate(self.cfg.class_names))
+        cat_cols = list(getattr(self.cfg, "categorical_cols", []) or [])
+        intro, scored_block = _INTRO[mode], _SCORED[mode]
+        if mode == "direct" and cat_cols:
+            intro = ("Some feature values are missing (NaN), and the columns you must recover are "
+                     "CATEGORICAL. Build a pipeline that RECOVERS them as accurately as possible.")
+            scored_block = (
+                f"The recovery targets are CATEGORICAL columns ({', '.join(cat_cols)}): each cell holds an\n"
+                f"integer category code (0..K-1, not a quantity). For the held-out TEST rows your recovered\n"
+                f"code at each missing cell is compared to the true category. Score = how much you reduce\n"
+                f"the classification error versus always guessing the single most-common class, averaged\n"
+                f"over the target columns: 0 = no better than the majority class, 1 = every category\n"
+                f"correct. Output valid integer class codes; only the originally-missing cells are scored.")
         return _TEMPLATE.format(
             task_description=self.cfg.task_description,
-            intro=_INTRO[mode],
-            scored_block=_SCORED[mode],
+            intro=intro,
+            scored_block=scored_block,
             data_dir=str(CONTAINER_DATA_AGENT / self.cfg.data_rel),
             n_train=self.cfg.n_train, n_test=self.cfg.n_test, n_features=n_features,
             km1=self.cfg.n_classes - 1, classes=classes,

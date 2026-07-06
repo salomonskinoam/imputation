@@ -54,12 +54,15 @@ def mnar_amputate(X, target_idxs, rate, seed):
     return Xc
 
 
-def co_amputate(X, target_idxs, reconstructor_idxs, rate, seed):
-    """Blockwise: choose rows by MNAR on the primary target, then null targets + reconstructors on
-    those rows (the recovery path disappears on the affected rows)."""
+def co_amputate(X, driver_idx, target_idxs, reconstructor_idxs, rate, seed):
+    """Blockwise: choose rows (MAR on the driver if set, else MNAR on the primary target), then null
+    targets + reconstructors on those rows (the recovery path disappears on the affected rows).
+    Driver-based selection keeps a co-amputate task identical to its MAR base task except for the extra
+    reconstructor deletion, so the co-amputate axis is isolated."""
     rng = np.random.RandomState(seed)
     Xc = X.astype(np.float32, copy=True)
-    p = np.minimum(1.0, 2.0 * rate * _rank_frac(X[:, target_idxs[0]]))
+    sel_col = driver_idx if driver_idx is not None and driver_idx >= 0 else target_idxs[0]
+    p = np.minimum(1.0, 2.0 * rate * _rank_frac(X[:, sel_col]))
     rows = rng.random(len(Xc)) < p
     for j in list(target_idxs) + list(reconstructor_idxs):
         Xc[rows, j] = np.nan
@@ -73,7 +76,7 @@ def amputate_matrix(X, *, mechanism, target_idxs, driver_idx, reconstructor_idxs
     if mechanism == "MNAR":
         return mnar_amputate(X, target_idxs, rate, seed)
     if mechanism == "co_amputate":
-        return co_amputate(X, target_idxs, reconstructor_idxs, rate, seed)
+        return co_amputate(X, driver_idx, target_idxs, reconstructor_idxs, rate, seed)
     raise ValueError(f"unknown mechanism: {mechanism!r}")
 
 

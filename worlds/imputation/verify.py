@@ -15,6 +15,7 @@ called by the local harness and by the pytest gate suite (via _container_score).
 """
 from __future__ import annotations
 
+import base64
 import json
 from pathlib import Path
 
@@ -58,29 +59,58 @@ def _downstream_score(s_tr, s_te, ytr, yte, n_classes, cfg) -> dict:
             "student_macro_f1": macro_f1, "gate_ok": True}
 
 
-def _direct_score(data_root_dir: Path, data_agent_dir: Path, s_te, cfg) -> dict:
-    """Recovery quality on the held-out test's amputed cells vs truth."""
+def _direct_score(data_root_dir: Path, data_agent_dir: Path, s_te, cfg, meta) -> dict:
+    """Recovery quality on the held-out test's amputed cells vs truth.
+
+    Scores ONLY the configured target_cols. Under co-amputate, reconstructor columns are also NaN'd
+    (and must be imputed to pass the gate) but are NOT scored, so a "single-target" task stays single.
+    For the shipped MAR tasks target_cols == the amputed cols, so this is identical to scoring all NaN
+    cols. Falls back to discovering all NaN cols if no target_cols are configured."""
     truth = np.load(data_root_dir / "test_features.npy").astype(np.float64)      # clean (grader-only)
     corr = np.load(data_agent_dir / "test_features.npy").astype(np.float64)      # corrupted (has NaN)
     corr_tr = np.load(data_agent_dir / "train_features.npy").astype(np.float64)  # for the naive baseline
     mask = np.isnan(corr)
-    amputed_cols = [c for c in range(mask.shape[1]) if mask[:, c].any()]
+    name_to_i = {n: i for i, n in enumerate(meta["feature_names"])}
+    target_cols = list(_get(cfg, "target_cols", []) or [])
+    cand = [name_to_i[c] for c in target_cols if c in name_to_i] if target_cols else range(mask.shape[1])
+    amputed_cols = [c for c in cand if mask[:, c].any()]
+    cat_set = {name_to_i[c] for c in (_get(cfg, "categorical_cols", []) or []) if c in name_to_i}
     per_col = {}
     skills = []
+    preds = []  # imputed values at the scored cells, col-major (for c in amputed_cols: rows ascending)
     for c in amputed_cols:
         m = mask[:, c]
+        preds.append(np.asarray(s_te[m, c], dtype=np.float32))
         obs_tr = corr_tr[~np.isnan(corr_tr[:, c]), c]
-        naive_val = float(obs_tr.mean()) if len(obs_tr) else 0.0
-        base = _rmse(np.full(m.sum(), naive_val), truth[m, c])
-        method = _rmse(s_te[m, c], truth[m, c])
-        skill = 0.0 if base <= 1e-12 else max(0.0, min(1.0, 1.0 - method / base))
-        per_col[int(c)] = {"rmse_method": round(method, 4), "rmse_naive": round(base, 4),
-                           "skill": round(skill, 4), "n": int(m.sum())}
+        if c in cat_set:
+            # Classification recovery: naive = train majority class, error = misclassification rate.
+            t = np.rint(truth[m, c]).astype(int)
+            p = np.rint(s_te[m, c]).astype(int)
+            mode_cls = int(np.bincount(np.rint(obs_tr).astype(int)).argmax()) if len(obs_tr) else 0
+            err_naive = float(np.mean(t != mode_cls))
+            err_method = float(np.mean(p != t))
+            skill = 0.0 if err_naive <= 1e-12 else max(0.0, min(1.0, 1.0 - err_method / err_naive))
+            per_col[int(c)] = {"acc_method": round(1 - err_method, 4), "acc_naive": round(1 - err_naive, 4),
+                               "skill": round(skill, 4), "n": int(m.sum()), "kind": "categorical"}
+        else:
+            naive_val = float(obs_tr.mean()) if len(obs_tr) else 0.0
+            base = _rmse(np.full(m.sum(), naive_val), truth[m, c])
+            method = _rmse(s_te[m, c], truth[m, c])
+            skill = 0.0 if base <= 1e-12 else max(0.0, min(1.0, 1.0 - method / base))
+            per_col[int(c)] = {"rmse_method": round(method, 4), "rmse_naive": round(base, 4),
+                               "skill": round(skill, 4), "n": int(m.sum()), "kind": "numeric"}
         skills.append(skill)
     score = float(np.mean(skills)) if skills else 0.0
+    kinds = "categorical" if cat_set else "numeric"
+    # Persist the imputed values at the scored cells (col-major, ascending rows per col) so an offline
+    # band engine can recompute per-cell resolution without re-running the solution. y_true is
+    # reconstructable from the committed npz (deterministic amputation), aligned by scored_cols order.
+    flat = np.concatenate(preds) if preds else np.empty(0, dtype=np.float32)
     return {"primary": "recovery", "score": score,
-            "reason": f"recovery skill (1 - RMSE/RMSE_naive) mean over {len(skills)} amputed cols = {score:.4f}",
-            "per_col": per_col, "gate_ok": True}
+            "reason": f"recovery skill (1 - err/err_naive; {kinds}) mean over {len(skills)} amputed cols = {score:.4f}",
+            "per_col": per_col, "gate_ok": True,
+            "predictions_b64": base64.b64encode(flat.tobytes()).decode(),
+            "scored_cols": [int(c) for c in amputed_cols]}
 
 
 def compute_scores(data_root_dir: Path, data_agent_dir: Path, solution_dir: Path, cfg) -> dict:
@@ -101,7 +131,7 @@ def compute_scores(data_root_dir: Path, data_agent_dir: Path, solution_dir: Path
         return {"primary": mode, "score": 0.0, "reason": f"GATE FAIL: {gate}", "gate_ok": False}
 
     if mode == "direct":
-        return _direct_score(data_root_dir, data_agent_dir, s_te, cfg)
+        return _direct_score(data_root_dir, data_agent_dir, s_te, cfg, meta)
     return _downstream_score(s_tr, s_te, ytr, yte, n_classes, cfg)
 
 
