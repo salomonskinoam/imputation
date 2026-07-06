@@ -225,3 +225,15 @@ horizon_env/
 
 # Throwaway experiments / calibration scripts + scratch data
 scratchpad/
+
+# Pulled rollout cache (regenerable via `horizon rollouts pull`; transcripts are multi-MB).
+# Also in sdk/hor_task.py _FORBIDDEN_IN_CONTEXT, so keeping it out of git avoids a materialize hazard.
+.rollouts/
+
+# Per-eval analysis dirs: commit only the slim durable record (band_supports.json) + any written
+# ANALYSIS.md; ignore the heavy, regenerable dumps (full transcripts, per-run json, dumped solutions).
+analysis/*/run*
+analysis/*/*_transcript.md
+analysis/*/solutions/
+analysis/*/*.json
+!analysis/*/band_supports.json
