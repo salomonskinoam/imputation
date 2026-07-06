@@ -1,0 +1,33 @@
+{
+  "task": "bank-impute-cat-single",
+  "metric": "recovery",
+  "band": [
+    0.2318,
+    0.2692
+  ],
+  "band_note": "",
+  "width": 0.03739999999999999,
+  "mid": 0.2505,
+  "scores_sorted": [
+    0.2318,
+    0.2331,
+    0.2341,
+    0.2344,
+    0.2692
+  ],
+  "sigma_abs": 0.005237395429803921,
+  "lsd": 0.014813591296679144,
+  "band_supports": 3.5247085092987667,
+  "n_observed": 2,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "job single converges on a 2nd dataset (four runs bunched ~0.233), confirms single-cat convergence",
+  "submit": "NO (converged)",
+  "eval": "ec944173-61c8-4030-ab90-96a2d938d93b"
+}

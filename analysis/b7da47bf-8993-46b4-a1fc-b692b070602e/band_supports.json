@@ -1,0 +1,33 @@
+{
+  "task": "adult-impute-cat-multi",
+  "metric": "recovery",
+  "band": [
+    0.3646,
+    0.4486
+  ],
+  "band_note": "",
+  "width": 0.08400000000000002,
+  "mid": 0.40659999999999996,
+  "scores_sorted": [
+    0.3646,
+    0.3767,
+    0.3906,
+    0.4453,
+    0.4486
+  ],
+  "sigma_abs": 0.00438138100736809,
+  "lsd": 0.012392416885087692,
+  "band_supports": 7.778338784025309,
+  "n_observed": 3,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 7.8",
+  "submit": "**YES**",
+  "eval": "b7da47bf-8993-46b4-a1fc-b692b070602e"
+}

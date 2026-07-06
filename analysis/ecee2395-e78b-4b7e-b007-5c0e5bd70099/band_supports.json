@@ -1,0 +1,32 @@
+{
+  "task": "adult-impute-cat-coamp-multi",
+  "metric": "recovery",
+  "band": [
+    0.2918,
+    0.3185
+  ],
+  "band_note": "",
+  "width": 0.0267,
+  "mid": 0.30515000000000003,
+  "scores_sorted": [
+    0.2918,
+    0.2965,
+    0.3113,
+    0.3185
+  ],
+  "sigma_abs": 0.00438138100736809,
+  "lsd": 0.012392416885087694,
+  "band_supports": 3.1545433992080443,
+  "n_observed": 2,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 4,
+  "n_nondegenerate": 4,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "co-amputating BOTH educ predictors over-hardened -> converged ~0.30; mild variant is the WORKS one",
+  "submit": "NO (over-hardened)",
+  "eval": "ecee2395-e78b-4b7e-b007-5c0e5bd70099"
+}

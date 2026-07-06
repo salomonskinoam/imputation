@@ -1,4 +1,6 @@
 # Claude working notes — imputation
+Always look at the sdk docs and skills, they define methodology.
+
 
 ## What this repo is
 
@@ -14,12 +16,45 @@ Design + findings live in `readmes/README_general_direction.md` and `readmes/REA
 paths, prehook, prompt_builder, active, Dockerfile, data/*.npz`), `tasks_def/` (configs + instances),
 `tasks/<task>/` (apex shims), root `hor.py`.
 
+## Heavy local runs — ONLY with explicit user approval (never automatic)
+
+**Never start heavy local compute on your own.** No local model fits, imputers, bootstraps, vetting,
+resolution/σ measurement, or re-running agent submissions WITHOUT the user first approving that specific
+run. It is a shared dev box; unapproved heavy jobs have wedged/crashed it (incl. "capped"/`nice`/`nohup`
+— they still spike and `nohup` outlives the session). Reading files, editing, git, the hosted CLI, and
+light data vendoring are always fine.
+
+**Default to HOSTED for measurement.** Prefer vetting/oracle-band/resolution checks as a **validation run
+on a THROWAWAY task** (create → push → `validate -a oracle` → read score → discard) or an
+`evaluations submit`. If something genuinely needs local compute, STOP and ask the user to approve it
+first; only run it once they say yes.
+
+**New-task flow = EVAL-DIRECTLY (the local classifier vet is opt-in, ask first).** To add a task: vendor
+(light) → **glance at the target columns' class balance / cardinality** (`np.bincount` on the npz — free,
+no model) to pick sane targets (skip binary + mode-dominated cols) → build → **`evaluations submit` (7
+runs)**. Do NOT auto-run a local reconstructability/classifier vet — the vet never predicts the band (only
+a real eval does); its only extra value over the free class-balance glance is catching a floored/trivial
+target, which the eval reveals anyway. The classifier vet stays available but is a heavy local run:
+**ask the user before running it**, never automatically. Accept that an occasional eval returns a dud
+(floored/converged) — that is a documented negative, cheaper than crashing the box.
+
+## Scores: spread only
+**We do NOT care about the mean. Only the SPREAD (the band).** Report min/max/std/spread/mean across runs,
+but conclusions on viability are from the spread. A tight cluster is a bad task even at a high mean. single high outliers to a packed score are good. single low outliers are not as good.
+std is much less telling than spread, and spread needs to also be reported as "how many distinct levels does it contain", as defined in the sdk docs
+
 ## Writing style
 
 - Never use the em-dash. Use a comma, period, or parentheses. Also no "--" as a substitute.
 - Keep drafts short. Fewer words than you think you need.
 - OMIT any "co-authored by Claude" line from git commits.
 - No inline imports. All imports at the top of the file, always.
+
+## Grader timeout
+
+**The platform's time cap is the ONLY timeout. Never impose a shorter grader-side watchdog, and
+never reduce a timeout below the platform's.** The cap is the sysadmin's to own and to raise (one day they will);
+our code must not undercut it. A hanging policy is killed by that cap and doesn't score, and we deal with it.
 
 ## Evaluations — biggie-max-polara ONLY
 
@@ -31,10 +66,11 @@ paths, prehook, prompt_builder, active, Dockerfile, data/*.npz`), `tasks_def/` (
   model's skill band on the task (biggie's band). Do NOT call it noise. Re-run NOISE (σ) is a separate
   thing: re-scoring ONE fixed solution across seeds (~0 for pinned seeds) — the resolution ruler only.
 
-## Oracle changes need approval
+## Oracle
 
 - **Never promote a solution to the oracle (`solution.sh`) without explicit user approval.** Present
   the candidate + its score and ask first.
+- Oracles are NOT IMPORTANT until the final testing phase on taiga. the best observed until then should just be 1.0 even if we have offline "oracles" for testing. these are fake and do NOT reflect what the actual oracle is.
 
 ## Jargon
 

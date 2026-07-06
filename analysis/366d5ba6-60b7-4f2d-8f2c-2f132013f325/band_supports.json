@@ -1,0 +1,33 @@
+{
+  "task": "adult-impute-cat-coamp-multi-mild",
+  "metric": "recovery",
+  "band": [
+    0.2925,
+    0.3684
+  ],
+  "band_note": "",
+  "width": 0.07590000000000002,
+  "mid": 0.33045,
+  "scores_sorted": [
+    0.2925,
+    0.3105,
+    0.348,
+    0.3666,
+    0.3684
+  ],
+  "sigma_abs": 0.00438138100736809,
+  "lsd": 0.012392416885087694,
+  "band_supports": 7.124713258422869,
+  "n_observed": 4,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 7.1",
+  "submit": "**YES**",
+  "eval": "366d5ba6-60b7-4f2d-8f2c-2f132013f325"
+}

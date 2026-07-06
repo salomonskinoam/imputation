@@ -1,0 +1,33 @@
+{
+  "task": "adult-impute-cat-coamp-single-occ",
+  "metric": "recovery",
+  "band": [
+    0.091,
+    0.1682
+  ],
+  "band_note": "",
+  "width": 0.07719999999999999,
+  "mid": 0.1296,
+  "scores_sorted": [
+    0.091,
+    0.1386,
+    0.1592,
+    0.1679,
+    0.1682
+  ],
+  "sigma_abs": 0.003918719098049761,
+  "lsd": 0.01108381139118487,
+  "band_supports": 7.965113107337641,
+  "n_observed": 3,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 8.0",
+  "submit": "**YES**",
+  "eval": "56635973-4eea-4d80-9bde-f765ae6f7e9e"
+}

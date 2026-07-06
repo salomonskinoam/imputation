@@ -1,0 +1,33 @@
+{
+  "task": "bank-impute-cat-multi",
+  "metric": "recovery",
+  "band": [
+    0.1419,
+    0.2269
+  ],
+  "band_note": "",
+  "width": 0.08499999999999999,
+  "mid": 0.1844,
+  "scores_sorted": [
+    0.1419,
+    0.1899,
+    0.1903,
+    0.1975,
+    0.2269
+  ],
+  "sigma_abs": 0.004526608395367879,
+  "lsd": 0.012803181968562337,
+  "band_supports": 7.638974608711634,
+  "n_observed": 3,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 7.6",
+  "submit": "**YES**",
+  "eval": "175c88fc-d0ca-41e6-ad7f-30bdcdcfd22a"
+}

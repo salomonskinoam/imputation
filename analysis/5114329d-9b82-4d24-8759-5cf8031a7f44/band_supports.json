@@ -1,0 +1,33 @@
+{
+  "task": "covertype-impute-coamp-multi",
+  "metric": "recovery",
+  "band": [
+    0.2877,
+    0.329
+  ],
+  "band_note": "",
+  "width": 0.0413,
+  "mid": 0.30835,
+  "scores_sorted": [
+    0.2877,
+    0.2882,
+    0.2906,
+    0.3002,
+    0.329
+  ],
+  "sigma_abs": 0.0023055,
+  "lsd": 0.006520938736102341,
+  "band_supports": 7.333443952072092,
+  "n_observed": 3,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=15000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "narrow cluster; covertype's redundant residual lets all strong models converge",
+  "submit": "NO (clustered)",
+  "eval": "5114329d-9b82-4d24-8759-5cf8031a7f44"
+}

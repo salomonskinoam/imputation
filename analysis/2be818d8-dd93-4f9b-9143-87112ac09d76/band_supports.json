@@ -1,0 +1,33 @@
+{
+  "task": "adult-impute-cat-single",
+  "metric": "recovery",
+  "band": [
+    0.2281,
+    0.2462
+  ],
+  "band_note": "",
+  "width": 0.018100000000000005,
+  "mid": 0.23715,
+  "scores_sorted": [
+    0.2281,
+    0.2415,
+    0.2422,
+    0.2455,
+    0.2462
+  ],
+  "sigma_abs": 0.003918719098049761,
+  "lsd": 0.01108381139118487,
+  "band_supports": 2.633012269984603,
+  "n_observed": 2,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "occupation single converges: one classifier recipe -> shared MI ceiling ~0.24",
+  "submit": "NO (converged)",
+  "eval": "2be818d8-dd93-4f9b-9143-87112ac09d76"
+}

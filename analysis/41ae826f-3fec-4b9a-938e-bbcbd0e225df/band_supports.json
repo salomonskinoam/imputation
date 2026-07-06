@@ -1,0 +1,33 @@
+{
+  "task": "california-impute-direct",
+  "metric": "recovery",
+  "band": [
+    0.3645,
+    0.5227
+  ],
+  "band_note": "",
+  "width": 0.15820000000000006,
+  "mid": 0.4436,
+  "scores_sorted": [
+    0.3645,
+    0.4376,
+    0.4499,
+    0.4964,
+    0.5227
+  ],
+  "sigma_abs": 0.00426739319794677,
+  "lsd": 0.01207001067303003,
+  "band_supports": 14.106864963549024,
+  "n_observed": 5,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=8500 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 14.1",
+  "submit": "**YES**",
+  "eval": "41ae826f-3fec-4b9a-938e-bbcbd0e225df"
+}

@@ -1,0 +1,33 @@
+{
+  "task": "bank-impute-cat-coamp-multi-mild",
+  "metric": "recovery",
+  "band": [
+    0.0645,
+    0.119
+  ],
+  "band_note": "",
+  "width": 0.05449999999999999,
+  "mid": 0.09175,
+  "scores_sorted": [
+    0.0645,
+    0.0663,
+    0.1024,
+    0.109,
+    0.119
+  ],
+  "sigma_abs": 0.004526608395367879,
+  "lsd": 0.012803181968562335,
+  "band_supports": 5.256754307938636,
+  "n_observed": 3,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 5.3",
+  "submit": "**YES**",
+  "eval": "f834e331-1ae0-4063-b789-8cbc4193cb4a"
+}

@@ -417,3 +417,196 @@ design preference, not a leak fix.
 
 **Conclusion: Direction A is the working flagship.** Direction B (downstream) stays parked (§12 / B0).
 Per-eval analysis: `analysis/<eval_id>/`; submission index: `submissions/`.
+
+## 14. Second dataset — california-impute-direct (engine generalizes)
+
+Stamped a second direct-recovery task with only a new npz + config + shim (engine untouched),
+proving the "task = npz + config + shim" claim. Raw California housing (OpenML 537, 20640 blocks,
+8 features). Amputate `median_income` under MAR (driver `latitude`), rate 0.5, n_train=3000,
+n_test=17000 (8480 amputed test cells). Continuous `median_house_value` discretized into 5 quantile
+tiers to satisfy the engine's integer-label/stratify contract (direct scoring ignores label values).
+
+- task_id `76263f44-25bb-48a4-82f1-6383a214e8f8`
+- Vetting (`scratchpad/vet_california.py`): `median_income` reconstructs at R^2 ~0.68 from features
+  alone (0.5-0.9 sweet spot). Rooms/bedrooms/households ~0.95-0.97 (too easy), age 0.27 (floor risk).
+  Single target on purpose: population (0.82) is near-trivial via households (corr 0.91) and would
+  dilute the band; resolution comes from large n_test instead.
+- Local sanity (`scratchpad/sanity_california.py`) + hosted validate agree: HGB-MICE oracle **0.367**,
+  mean-fill **0.000**. noop -> 0. Oracle hosted shows cosmetic FAILED (best_observed=1, oracle<1) but
+  `tests_passed 1/1`, `all checks passed` — a real grade.
+- Biggie band (eval `41ae826f`, 5 runs): **0.36–0.52, mean 0.454, std 0.054, width 0.158** — beat the
+  HGB-MICE reference (0.367) on 4/5. Resolution (`scratchpad/tiers_california.py`): σ̄≈0.0075, **all 5
+  runs pairwise separable (flip-rate 0.000) → 5/5 distinct levels, ~8 over the band**. Stronger than
+  covertype (wider band, cleaner realized separation). Same lessons: train+test **feature** pooling
+  won (top two), MICE over-iteration lost (worst). **WORKS → submit YES.** See
+  `readmes/tasks/california-impute-direct.md`.
+
+## 15. Making tasks differ ON PURPOSE — the input-knob grid
+
+Covertype and California discriminate on *different* skills (covertype: ensemble diversity across 3
+heterogeneous targets; california: transductive pooling on 1 target — see each
+`analysis/<eval_id>/ANALYSIS.md`). But that difference was **accidental** (it fell out of 3-vs-1
+targets), not designed. Lesson: with biggie's fixed strategy space, a new "complete numeric table,
+ampute 1 col" task tends to collapse onto the SAME winning lever (strong tree imputer + pooling). A new
+dataset buys different *content* for free but NOT a different *discriminating skill*.
+
+**An axis qualifies only if it is (a) an INPUT we set — a property of the data or of the amputation, not
+a description of the recovered output — AND (b) changes the SKILL taught, not merely the difficulty.**
+Changing a constant (rate, or how hard the chosen target is to reconstruct) moves difficulty within one
+skill; it is a tuning dial, not an axis. This is why "recovery path" and "reconstruct regime" from the
+earlier draft are OUT as axes: they described the output/difficulty. What survives are three input levers:
+
+- **Amputed-column type** — we ampute a **numeric** vs a **categorical** column. Input: which column /
+  dataset. Skill: regression-imputation (NRMSE) vs classification-imputation (accuracy). [needs the
+  additive cat branch in `verify.py` + a dataset that has a categorical, recoverable target]
+- **Number of amputed columns** — we ampute **one** column vs **several** heterogeneous columns. Input:
+  amputation config. Skill: a single conditional regression vs a multi-column portfolio (this is the
+  covertype-vs-california lever, ensemble-diversity vs data-access). [config-only]
+- **Co-amputate the reconstructors** — on the affected rows we delete the target **only** (isolated) vs
+  the target **AND its top predictor columns** (blockwise). Input: amputation pattern. Skill: exploit the
+  strong direct correlates vs recover when the direct predictors are themselves missing (lean on weak /
+  indirect signal + priors). [config-only]
+
+**Rejected as axes:** **rate** and **target reconstructability** (difficulty dials, not skills — kept
+only as VETTING knobs so the band lands in the 0.5–0.9 sweet spot, §10); **MAR→MNAR** (self-masking
+shifts the *bias* but the winning strategy stays "strong conditional imputer"). **Candidate axes, NOT
+yet endorsed** (each is a genuine input that *might* change the skill, to test later): **disguised-missing
+sentinels** (missing encoded as a plausible value like −200, so the student must first DETECT the
+missingness → adds a data-cleaning skill) and **tail-deletion** (delete the target's extreme values →
+forces extrapolation beyond the observed range vs interpolation).
+
+**Hard constraint:** every variant is a NEW task (new config + shim + task_id). Never edit the two
+shipped tasks; the categorical scorer must be an ADDITIVE, gated branch in `verify.py` that leaves the
+numeric path byte-identical.
+
+**The grid = 2^3 = 8 slots** (Type × #Columns × Co-amputate). Each slot is a distinct skill-combo; the
+two shipped tasks are one knob-flip apart (both Numeric/Isolated, differ only on #Columns):
+
+| # | Task | Amputed type | # columns | Co-amputate reconstructors | Comments (hypothesized skill / feasibility) |
+|---|---|---|---|---|---|
+| 1 | ✓ california | Numeric | Single | No | single conditional regression → data-access / pooling lever |
+| 2 | — | Numeric | Single | Yes | recover one col when its predictors are also gone → indirect signal + priors; VET (floor-collapse risk) |
+| 3 | ✓ covertype | Numeric | Multi | No | multi-column portfolio → ensemble-diversity lever |
+| 4 | — | Numeric | Multi | Yes | blockwise deletion of several cols + their predictors → recover from residual structure; VET |
+| 5 | — | Categorical | Single | No | classification imputation of one cat col (calibration/mode) → needs cat branch + cat dataset |
+| 6 | — | Categorical | Single | Yes | cat recovery without direct predictors; VET |
+| 7 | — | Categorical | Multi | No | several cat cols jointly → cat portfolio |
+| 8 | — | Categorical | Multi | Yes | cat blockwise recovery; VET |
+
+**Datasets ≠ slots (correction to "one dataset per slot").** Two of the three axes (#columns,
+co-amputate) are **config-only**, so ONE dataset fills all four of its Type-slots by changing the
+amputation. Only the **Type** axis forces a different (or Mixed) dataset. So the 8 slots need ~2
+datasets that *afford* the targets: our numeric ones (covertype/california, already cover slots 1–4 by
+config) + one categorical dataset with a recoverable cat target (Adult is the shortlisted afford-er,
+covers 5–8). Each slot still needs the dataset to afford it (≥2 heterogeneous targets for Multi; a
+co-amputable target with named reconstructors). ⚠ Co-amputate slots need floor-collapse vetting first.
+
+### 15a. Co-amputate slots built (2 & 4, both datasets) — result + a key lesson
+
+Built all four co-amputate tasks (slots 2 & 4 × {California, Covertype}), 5 runs each (20 runs). Two
+engine tweaks made the axis clean and safe (verified no change to the base tasks): `co_amputate` now
+selects rows MAR-on-driver like the base tasks (so only the reconstructor deletion differs), and
+`_direct_score` scores only the configured `target_cols` (co-amputated reconstructors are imputed-but-
+unscored, so "single" stays single).
+
+| task | band | width | distinct | vs oracle | verdict |
+|---|---|---|---|---|---|
+| california-impute-coamp-multi | 0.27–0.39 | 0.124 | 5/5 | oracle 0.08 | WORKS (best) |
+| california-impute-coamp-single | 0.15–0.26 | 0.111 | ~3/5 | oracle 0.00 | WORKS |
+| covertype-impute-coamp-single | 0.53–0.61 | 0.077 | ~3/5 (bunched) | oracle 0.32 | MARGINAL |
+| covertype-impute-coamp-multi | 0.29–0.33 | 0.041 | ~3/5 | oracle 0.15 | MARGINAL/weak |
+
+**Lesson (important): oracle skill does NOT predict the biggie band.** The vet (HGB-MICE oracle) said
+California co-amp would floor (0.00/0.08) and Covertype would be the viable one (0.32/0.15). The real
+evals inverted it: **California co-amp separates best** (biggie recovers the fragile rooms/household-ratio
+combination with run-to-run skill variance → wide spread), while **Covertype co-amp clusters high** (the
+44 residual soil/wilderness indicators let strong models converge → narrow band, esp. multi at width
+0.04). So use the oracle vet only to avoid *true* floor-collapse (nobody recovers), NOT to predict spread
+— only a real eval measures the band. Levels here are closed-form (bootstrap deferred; machine was
+saturated). Per-task detail: `analysis/<eval_id>/ANALYSIS.md`; summary in README_submission.md.
+
+## 16. Categorical imputation — the scorer, the results, and the next datasets
+
+### 16a. The categorical scorer (built, generic, gated)
+Added a categorical branch to `verify._direct_score`, gated by a new `categorical_cols` config key
+(numeric tasks are byte-identical). Score per categorical target = `1 − err/err_naive`, err =
+misclassification rate on the amputed cells, err_naive = majority-class error (0 = mode-fill, 1 =
+perfect). Categorical targets are integer class-coded FEATURE columns; `prompt_builder` gets a categorical
+framing. Verified perfect→1.0, mode-fill→0.0. **No infra beyond this: a new categorical dataset = a
+`vendor_*.py` (fetch + integer-code + complete carve-out) + config + shim, like Adult.**
+
+### 16b. Offline resolution (levels are a task PROPERTY, not an observation)
+Resolution = the finest trustworthy score gap, computed BEFORE any run. `scratchpad/offline_resolution.py`:
+`LSD = 1.96·√2·σ`, `σ = sqrt(err_naive(1−err_naive)/N)/err_naive` at the majority operating point,
+N = `rate·n_test` amputed cells, /√k over k targets. **Max levels over [0,1] = 1/LSD** is the task's
+resolution; after an eval, **levels-in-band = 1 + band_width/LSD**. Adult: ~82–92 levels available, so its
+narrow single band is a real convergence, not a resolution limit.
+
+### 16c. Adult result — single CONVERGES, multi SPREADS (inverts the numeric pattern)
+Adult (UCI id=2, native categorical, complete carve-out 45,222 rows; `tools/vendor_adult.py`). Target vet
+(`scratchpad/vet_adult.py`) flipped our assumption: **`occupation`** (14 classes, mode 0.13) is the sweet
+spot (classifier skill ~0.25); `relationship`/`marital-status` are EASY (~0.65/0.71, mutually predictable
+via marital↔relationship↔sex); `workclass` floors; `education` is a trap (twin `education-num`).
+
+| task | band | levels-in-band | verdict |
+|---|---|---|---|
+| adult-impute-cat-single (occupation) | 0.23–0.25 (w 0.018) | ~2–3 | MARGINAL (converged) |
+| adult-impute-cat-multi (occ+rel+marital) | 0.36–0.45 (w 0.084) | ~8 (~4 realized) | **WORKS** |
+
+**Key finding: categorical inverts numeric.** Numeric side: single spreads, multi dilutes (covertype).
+Categorical side: **single converges** (occupation has ONE obvious approach — fit a strong classifier →
+everyone hits the same MI ceiling ~0.24), **multi spreads** (three columns of different difficulty where,
+under MAR-per-column, the OTHER targets are usually still observed and are mutually predictive, so
+exploiting the redundancy via pool + chain + label-omission is optional → solutions vary → spread). So the
+categorical spreader is the **multi** cell.
+
+### 16d. Categorical target-selection recipe (extends §10, which was numeric)
+For a categorical target column: (1) **native** categorical (no discretizing a numeric col); (2)
+cardinality > 2 (more classes = more headroom); (3) mode NOT dominant (majority freq well under ~0.6, else
+err_naive tiny → no room + noise amplified); (4) **medium** reconstructability (skill ~0.2–0.6) — avoid a
+near-deterministic twin (converges high) and avoid unreconstructable (floors); (5) prefer a **multi** cell
+with 3+ heterogeneous, partially-redundant columns (the spread generator).
+
+### 16e. Next categorical datasets — DIFFERENT modalities, no infra (decided)
+To get another WORKS categorical task from a fundamentally different modality (Opus investigation), build
+BOTH — each is just vendor + config + shim:
+- **Diabetes 130-US Hospitals** (clinical; UCI id 296, ~101k rows, complete after dropping high-missing
+  cols). Structural clone of the working Adult-multi: the admission triad
+  (`admission_type`↔`admission_source`↔`discharge_disposition`) is a mutually-predictive cluster,
+  `readmitted` (mode ~0.54, weakly predictable) is the hard anchor. Multi cell over those. Risk: mild
+  mode-domination (~0.47–0.60). Confidence medium-high.
+- **Connect-4** (board-game state; UCI id 26 / OpenML 40668, 67,557 rows, fully complete, 42 cells ∈
+  {x,o,blank}). Fundamentally different: redundancy is **physical/logical** (gravity + turn parity), not
+  statistical. Hide 3–5 balanced mid-board cells. Risk (real): **convergence** — a strong tree ensemble
+  may learn gravity/parity implicitly, collapsing the naive-vs-clever gap → per-cell balance + headroom
+  vet first. Confidence medium-low.
+
+Rejected: Soybean (ideal structure, only 683 rows), Nursery (factorial → independent columns → floor),
+Mushroom (small, near-deterministic). As always: the vet only guards floor/convergence-shape; **only a
+real 5-run eval decides viability.**
+
+### 16f. Categorical co-amputate — the last two knob-slots (measured)
+
+Filled Cat·Single·Yes and Cat·Multi·Yes (co_amputate on the categorical scorer, config-only on Adult/Bank;
+5 runs each, biggie-max-polara/meteor). Mechanism fact: co_amputate nulls ALL targets on the SAME rows, so
+it removes the co-observed sibling redundancy that made Cat·Multi·No spread.
+
+- **Cat·Single·Yes → floors on LOW-cardinality, WORKS on HIGH-cardinality (salvaged).** First attempts
+  floored: adult relationship K=6 (co-amp marital+sex) → 0.05–0.07, 2 levels at the floor; bank education K=4
+  (co-amp job) → ~0; bank job K=12 (co-amp education) → ~0.065. Each has ONE strong carrier; co-amputate it
+  and you land at naive. **Fix = a HIGH-cardinality target with DISTRIBUTED predictors:** occupation K=14
+  (co-amp educ+educ-num) spreads 0.091→0.168, **3 realized levels / capacity 8 → WORKS**
+  (adult-impute-cat-coamp-single-occ). So the floor was a target-choice artifact, not a slot property; the
+  California distributed-signal intuition DOES transfer, but only to a high-card categorical (a low-card
+  single-carrier target has no residual to differentiate on). It is target-specific, not dataset-specific:
+  the Bank column floored because job's carrier is a single column (education), not because Bank can't.
+- **Cat·Multi·Yes → WORKS, at the right hardening.** Co-amputating BOTH of occupation's predictors
+  (educ-num+educ) over-hardened → converged ~0.30 (3 levels). Co-amputating only educ-num, keeping educ as
+  an OBSERVED anchor → band 0.29–0.37, 4/7.2 levels (adult-impute-cat-coamp-multi-mild). **Hardening is a
+  dial, not a switch**: keep one strong reconstructor observed (floor-anchor for the easy targets), remove
+  the other. Building both the aggressive best-shot and the mild hedge was the right call; the hedge won.
+  **Caveat (5-solution analysis, `analysis/366d5ba6…/ANALYSIS.md`):** the spread is driven by ESTIMATOR
+  choice (HGB@0.29 vs bagged RF/ExtraTrees@0.35–0.37 on the 14-class targets), NOT by MICE chaining
+  (uncorrelated with score) or educ-num recovery (deterministic from observed `education`). So the slot is a
+  real spreader, but the discriminated skill is "pick the right ensemble for a high-cardinality categorical
+  target," a weaker axis than the numeric-coamp fragile-combination skill.

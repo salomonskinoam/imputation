@@ -1,0 +1,33 @@
+{
+  "task": "adult-impute-cat-coamp-single",
+  "metric": "recovery",
+  "band": [
+    0.0511,
+    0.0738
+  ],
+  "band_note": "",
+  "width": 0.022700000000000005,
+  "mid": 0.062450000000000006,
+  "scores_sorted": [
+    0.0511,
+    0.0617,
+    0.0623,
+    0.0702,
+    0.0738
+  ],
+  "sigma_abs": 0.00838386546771536,
+  "lsd": 0.023713152499109033,
+  "band_supports": 1.9572746601639284,
+  "n_observed": 1,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "low-cardinality relationship (K=6) floored; superseded by adult-impute-cat-coamp-single-occ",
+  "submit": "NO (floored)",
+  "eval": "ef3a3efd-09a0-43fe-a4ba-d970ba310950"
+}

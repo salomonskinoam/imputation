@@ -1,0 +1,33 @@
+{
+  "task": "covertype-impute-coamp-single",
+  "metric": "recovery",
+  "band": [
+    0.533,
+    0.6104
+  ],
+  "band_note": "",
+  "width": 0.07740000000000002,
+  "mid": 0.5717000000000001,
+  "scores_sorted": [
+    0.533,
+    0.5928,
+    0.6094,
+    0.6096,
+    0.6104
+  ],
+  "sigma_abs": 0.0024727912029391666,
+  "lsd": 0.0069941097122269,
+  "band_supports": 12.066454943463581,
+  "n_observed": 3,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=15000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "clustered high, endpoints < 2 LSD apart; covertype recovery is intrinsically convergent",
+  "submit": "NO (clustered)",
+  "eval": "63093dca-ac27-48ad-891b-b0485a5c4d63"
+}

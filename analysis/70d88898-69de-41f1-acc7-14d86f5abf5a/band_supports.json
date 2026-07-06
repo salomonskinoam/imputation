@@ -1,0 +1,33 @@
+{
+  "task": "bank-impute-cat-coamp-single",
+  "metric": "recovery",
+  "band": [
+    0.0001,
+    0.0095
+  ],
+  "band_note": "",
+  "width": 0.0094,
+  "mid": 0.0048,
+  "scores_sorted": [
+    0.0001,
+    0.0074,
+    0.0086,
+    0.0093,
+    0.0095
+  ],
+  "sigma_abs": 0.01026744904011941,
+  "lsd": 0.02904073136702297,
+  "band_supports": 1.3236833081509136,
+  "n_observed": 1,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 0,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "low-cardinality education (K=4) floored to ~0; superseded by bank-impute-cat-coamp-single-job",
+  "submit": "NO (floored)",
+  "eval": "70d88898-69de-41f1-acc7-14d86f5abf5a"
+}

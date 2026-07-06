@@ -1,0 +1,33 @@
+{
+  "task": "covertype-impute-direct",
+  "metric": "recovery",
+  "band": [
+    0.2707,
+    0.3846
+  ],
+  "band_note": "",
+  "width": 0.1139,
+  "mid": 0.32765,
+  "scores_sorted": [
+    0.2707,
+    0.2985,
+    0.3009,
+    0.3768,
+    0.3846
+  ],
+  "sigma_abs": 0.002241166666666667,
+  "lsd": 0.006338976591077005,
+  "band_supports": 18.968200128760557,
+  "n_observed": 4,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=15000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 19.0",
+  "submit": "**YES**",
+  "eval": "c56b6c86-36e5-45da-9f9b-8d40ae038f2b"
+}

@@ -1,0 +1,33 @@
+{
+  "task": "california-impute-coamp-single",
+  "metric": "recovery",
+  "band": [
+    0.1507,
+    0.2619
+  ],
+  "band_note": "",
+  "width": 0.11120000000000002,
+  "mid": 0.2063,
+  "scores_sorted": [
+    0.1507,
+    0.1521,
+    0.1923,
+    0.2106,
+    0.2619
+  ],
+  "sigma_abs": 0.00608740111648158,
+  "lsd": 0.01721777043706674,
+  "band_supports": 7.458443641495333,
+  "n_observed": 4,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=8500 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "viable: #band_supports = 7.5",
+  "submit": "**YES**",
+  "eval": "0253d895-67be-40b9-a006-15d66a821a7f"
+}

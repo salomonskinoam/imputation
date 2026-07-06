@@ -1,0 +1,33 @@
+{
+  "task": "bank-impute-cat-coamp-single-job",
+  "metric": "recovery",
+  "band": [
+    0.0511,
+    0.0751
+  ],
+  "band_note": "",
+  "width": 0.024,
+  "mid": 0.0631,
+  "scores_sorted": [
+    0.0511,
+    0.0655,
+    0.0677,
+    0.0686,
+    0.0751
+  ],
+  "sigma_abs": 0.005237395429803921,
+  "lsd": 0.014813591296679142,
+  "band_supports": 2.6201338027585677,
+  "n_observed": 2,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=10000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 5,
+  "n_nondegenerate": 5,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "floored: job's single carrier is education; co-amputating it collapses recovery to naive",
+  "submit": "NO (floored)",
+  "eval": "7f7f6ea9-2ba4-4895-9e75-8349b18aa5d0"
+}
