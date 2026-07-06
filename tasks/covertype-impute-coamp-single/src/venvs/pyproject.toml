@@ -1,0 +1,34 @@
+[project]
+name = "task-env"
+version = "0"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+default-groups = []
+
+# CPU-only PyTorch (no CUDA): pin torch to the PyTorch CPU wheel index so the image stays lean.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[dependency-groups]
+# Student-facing env: fusion on raw sequences / pooled vectors, CPU only.
+model = [
+    "numpy==2.1.3",
+    "scikit-learn==1.5.2",
+    "torch==2.5.1",
+]
+# Grader subprocess env (verify.py runs as a pytest suite; the grader reads the JSON
+# report). numpy + scikit-learn are here too because verify.py computes the F1 score.
+grader = [
+    "pytest==8.3.4",
+    "pytest-json-report==1.5.0",
+    "numpy==2.1.3",
+    "scikit-learn==1.5.2",
+]

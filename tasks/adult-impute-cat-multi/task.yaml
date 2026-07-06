@@ -1,0 +1,13 @@
+prompt: |
+  <PLACEHOLDER>
+
+metadata:
+  difficulty: "medium"
+  category: "imputation"
+  tags:
+    - imputation
+    - missing-data
+    - tabular
+    - adult
+    - categorical-recovery
+  references: "California housing (Pace & Barry, 1997), OpenML id=537"

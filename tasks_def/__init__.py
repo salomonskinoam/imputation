@@ -1,3 +1,22 @@
 # Importing task modules here registers their instances (HorTask.__init__ -> registry).
 from tasks_def import covertype  # noqa: F401
 from tasks_def import covertype_direct  # noqa: F401
+from tasks_def import california_direct  # noqa: F401
+from tasks_def import california_coamp_single  # noqa: F401
+from tasks_def import california_coamp_multi  # noqa: F401
+from tasks_def import covertype_coamp_single  # noqa: F401
+from tasks_def import covertype_coamp_multi  # noqa: F401
+from tasks_def import california_direct_multi  # noqa: F401
+from tasks_def import covertype_direct_single  # noqa: F401
+from tasks_def import adult_cat_single  # noqa: F401
+from tasks_def import adult_cat_multi  # noqa: F401
+from tasks_def import diabetes_cat_multi  # noqa: F401
+from tasks_def import bank_cat_multi  # noqa: F401
+from tasks_def import adult_cat_coamp_single  # noqa: F401
+from tasks_def import bank_cat_coamp_single  # noqa: F401
+from tasks_def import adult_cat_coamp_multi  # noqa: F401
+from tasks_def import adult_cat_coamp_multi_mild  # noqa: F401
+from tasks_def import adult_cat_coamp_single_occ  # noqa: F401
+from tasks_def import bank_cat_coamp_single_job  # noqa: F401
+from tasks_def import bank_cat_single  # noqa: F401
+from tasks_def import bank_cat_coamp_multi_mild  # noqa: F401
