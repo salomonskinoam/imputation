@@ -1,0 +1,30 @@
+{
+  "task": "covertype-impute-direct-single",
+  "metric": "recovery",
+  "band": [
+    0.62,
+    0.71
+  ],
+  "band_note": "(endpoints only, not downloaded)",
+  "width": 0.08999999999999997,
+  "mid": 0.665,
+  "scores_sorted": [
+    0.62,
+    0.71
+  ],
+  "sigma_abs": 0.0019341234017852462,
+  "lsd": 0.005470527092215765,
+  "band_supports": 17.45179677988701,
+  "n_observed": 2,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=15000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 2,
+  "n_nondegenerate": 2,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "WORKS (clustered): band 0.62-0.71; only the endpoints are on record (full run set not downloaded)",
+  "submit": "**YES** (clustered)",
+  "eval": ""
+}

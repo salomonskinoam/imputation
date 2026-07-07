@@ -11,7 +11,7 @@ An SDK "world" of **missing-value imputation** tasks (a `HorTask` subclass + tas
 - **Downstream** (`covertype-impute`): predict a label through a fixed model; PARKED — too easy on
   Covertype (a standardizing linear model routes around the missingness). See below.
 
-Design + findings live in `readmes/README_general_direction.md` and `readmes/README_building_the_world.md`
+Design + findings live in `worlds/imputation/readmes/README_general_direction.md` and `worlds/imputation/readmes/README_building_the_world.md`
 (running docs). Key code: `worlds/imputation/` (`config_world, amputate, setup_data, verify, world,
 paths, prehook, prompt_builder, active, Dockerfile, data/*.npz`), `tasks_def/` (configs + instances),
 `tasks/<task>/` (apex shims), root `hor.py`.
@@ -151,7 +151,7 @@ pipeline.
 
 ## Running docs
 
-Keep `readmes/README_general_direction.md` (design + findings) and `readmes/README_building_the_world.md`
+Keep `worlds/imputation/readmes/README_general_direction.md` (design + findings) and `worlds/imputation/readmes/README_building_the_world.md`
 (build plan) current after any substantive decision/finding. Short entries, no timestamps.
 
 ---

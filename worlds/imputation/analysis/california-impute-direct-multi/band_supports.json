@@ -1,0 +1,30 @@
+{
+  "task": "california-impute-direct-multi",
+  "metric": "recovery",
+  "band": [
+    0.4,
+    0.6
+  ],
+  "band_note": "(endpoints only, not downloaded)",
+  "width": 0.19999999999999996,
+  "mid": 0.5,
+  "scores_sorted": [
+    0.4,
+    0.6
+  ],
+  "sigma_abs": 0.0027116307227332023,
+  "lsd": 0.007669649888473705,
+  "band_supports": 27.076809620810586,
+  "n_observed": 2,
+  "ceiling": false,
+  "gap": {},
+  "sigma_source": "static offline resolution: N=8500 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
+  "n_runs": 2,
+  "n_nondegenerate": 2,
+  "n_failed": 0,
+  "n_test": 0,
+  "n_classes": 0,
+  "verdict": "WORKS (widest numeric band): 0.40-0.60; only the endpoints are on record (full run set not downloaded)",
+  "submit": "**YES**",
+  "eval": ""
+}

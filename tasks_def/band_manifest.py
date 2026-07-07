@@ -28,11 +28,6 @@ MANIFEST = {
         cfg="tasks_def.configs.california_direct", npz="worlds/imputation/data/california.npz",
         eval="41ae826f-3fec-4b9a-938e-bbcbd0e225df", slot="num/single/no/california",
         scores=[0.3645, 0.4376, 0.4499, 0.4964, 0.5227],
-        narrative={"Strategy (5-solution analysis)":
-                   "Sorted by transductive train+test POOLING: one half-missing column means pooling the "
-                   "observed test-feature rows 6-7x's the regressor's fit rows; both poolers take the top two, "
-                   "the three inductive fits are the bottom three, simplicity breaks ties. MICE over-iteration "
-                   "and using the label are neutral-to-harmful. Full table: analysis/41ae826f/ANALYSIS.md."},
         task_url=_T+"76263f44-25bb-48a4-82f1-6383a214e8f8", evals=[("eval", _E+"41ae826f-3fec-4b9a-938e-bbcbd0e225df")]),
     "covertype-impute-direct-single": dict(
         cfg="tasks_def.configs.covertype_direct_single", npz="worlds/imputation/data/covertype.npz",
@@ -63,11 +58,6 @@ MANIFEST = {
         cfg="tasks_def.configs.covertype_direct", npz="worlds/imputation/data/covertype.npz",
         eval="c56b6c86-36e5-45da-9f9b-8d40ae038f2b", slot="num/multi/no/covertype",
         scores=[0.2707, 0.2985, 0.3009, 0.3768, 0.3846],
-        narrative={"Strategy (5-solution analysis)":
-                   "Sorted by diverse multi-family ENSEMBLING across 3 heterogeneous targets: the top two "
-                   "average ExtraTrees/RF/HGB and do a single pass; the single-family + MICE runs fall to the "
-                   "bottom trio. Pooling is near-universal (4/5) so it only separates the lone inductive floor. "
-                   "Full table: analysis/c56b6c86/ANALYSIS.md."},
         task_url=_T+"ff227290-a39d-4cf8-a162-4d79b580743f", evals=[("eval", _E+"c56b6c86-36e5-45da-9f9b-8d40ae038f2b")]),
     "california-impute-coamp-multi": dict(
         cfg="tasks_def.configs.california_coamp_multi", npz="worlds/imputation/data/california.npz",
@@ -100,11 +90,6 @@ MANIFEST = {
         eval="56635973-4eea-4d80-9bde-f765ae6f7e9e", slot="cat/single/yes/adult",
         scores=[0.091, 0.1386, 0.1592, 0.1679, 0.1682],
         supersedes="salvages the low-cardinality relationship attempt (adult-impute-cat-coamp-single), which floored",
-        narrative={"Strategy (5-solution analysis)":
-                   "Spread driven by regularization/averaging depth, NOT estimator family: a single deep HGB "
-                   "overfits the 14-class target (0.091); shallow regularized ensembles or a bagged "
-                   "RandomForest reach 0.168. Reconstructing the co-amputated education first is a red herring "
-                   "(occupation never consumes it). Full table: analysis/56635973-4eea-4d80-9bde-f765ae6f7e9e/ANALYSIS.md."},
         task_url=_T+"4d90aba0-2d22-4973-b3d4-204d9f813f24", evals=[("eval", _E+"56635973-4eea-4d80-9bde-f765ae6f7e9e")]),
     "bank-impute-cat-coamp-single-job": dict(
         cfg="tasks_def.configs.bank_cat_coamp_single_job", npz="worlds/imputation/data/bank.npz",
@@ -126,10 +111,6 @@ MANIFEST = {
         cfg="tasks_def.configs.adult_cat_coamp_multi_mild", npz="worlds/imputation/data/adult.npz",
         eval="366d5ba6-60b7-4f2d-8f2c-2f132013f325", slot="cat/multi/yes/adult",
         scores=[0.2925, 0.3105, 0.348, 0.3666, 0.3684],
-        narrative={"Strategy (5-solution analysis)":
-                   "Spread driven by estimator family: HGB lands ~0.29, bagged RF/ExtraTrees ~0.35-0.37. MICE "
-                   "chaining uncorrelated with score; educ-num recovery inert (deterministic from observed "
-                   "education). Full table: analysis/366d5ba6-60b7-4f2d-8f2c-2f132013f325/ANALYSIS.md."},
         task_url=_T+"d78859a7-2bf0-4ceb-b54f-79bdd5718d4c", evals=[("eval", _E+"366d5ba6-60b7-4f2d-8f2c-2f132013f325")]),
     "bank-impute-cat-coamp-multi-mild": dict(
         cfg="tasks_def.configs.bank_cat_coamp_multi_mild", npz="worlds/imputation/data/bank.npz",

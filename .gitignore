@@ -230,10 +230,10 @@ scratchpad/
 # Also in sdk/hor_task.py _FORBIDDEN_IN_CONTEXT, so keeping it out of git avoids a materialize hazard.
 .rollouts/
 
-# Per-eval analysis dirs: commit only the slim durable record (band_supports.json) + any written
-# ANALYSIS.md; ignore the heavy, regenerable dumps (full transcripts, per-run json, dumped solutions).
-analysis/*/run*
-analysis/*/*_transcript.md
-analysis/*/solutions/
-analysis/*/*.json
-!analysis/*/band_supports.json
+# Per-task analysis dirs (nested per-world): commit only the slim machine record (band_supports.json) +
+# the human STRATEGY.md; ignore the heavy, regenerable dumps (full transcripts, per-run json, solutions).
+worlds/imputation/analysis/*/run*
+worlds/imputation/analysis/*/*_transcript.md
+worlds/imputation/analysis/*/solutions/
+worlds/imputation/analysis/*/*.json
+!worlds/imputation/analysis/*/band_supports.json

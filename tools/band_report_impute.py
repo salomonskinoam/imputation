@@ -1,9 +1,11 @@
 """Band-resolution submission docs for the imputation world (static / no-predictions mode).
 
-Regenerates, for every task in `tasks_def/band_manifest.py`, the SDK two-file record:
-  - `readmes/tasks/<task>.md`         (per-task record, via sdk.hor_utils.band_report.render_record)
-  - a row in `readmes/README_submission.md` master table (upserted, one per task)
-  - a slim `analysis/<eval8>/band_supports.json` durable record.
+Regenerates, for every task in `tasks_def/band_manifest.py`, the per-world SDK docs:
+  - `worlds/imputation/readmes/tasks/<task>.md`     (per-task record, via band_report.render_record)
+  - a row in `worlds/imputation/readmes/README_submission.md` grid table (one per task)
+  - `worlds/imputation/analysis/<task>/band_supports.json`  (slim machine record, task-keyed)
+  - `worlds/imputation/analysis/<task>/STRATEGY.md`  (HUMAN-owned strategy; a [PENDING] stub is created if
+    missing and NEVER overwritten, linked from every row by a stable [analysis] link = the analysis seam).
 
 Unlike the classification engine (`budgeted/scratch/analysis/band_resolution.py`) this needs NO stored
 per-cell predictions and NO re-execution: the band comes from the inlined run SCORES, and the noise floor
@@ -30,6 +32,21 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+
+# Readmes + analysis are PER-WORLD (nested under the world dir), per the horizon-band-verdict skill.
+WORLD = REPO / "worlds" / "imputation"
+READMES = WORLD / "readmes"
+TABLE_PATH = READMES / "README_submission.md"
+RECORDS_DIR = READMES / "tasks"
+ANALYSIS_DIR = WORLD / "analysis"                 # task-keyed: analysis/<task>/{band_supports.json, STRATEGY.md}
+# link targets are relative to TABLE_PATH (worlds/imputation/readmes/); the record only DISPLAYS them.
+_REC_LINK = "tasks/{task}.md"
+_ANALYSIS_LINK = "../analysis/{task}/STRATEGY.md"
+_SRC_JSON = "../analysis/{task}/band_supports.json"
+STRATEGY_STUB = ("# {task}: strategy analysis\n\n**[PENDING]** — the 5-run solution comparison "
+                 "(what drove weak->strong; luck vs skill) has not been written yet.\n\n"
+                 "This file is HUMAN-owned and updated independently; editing it never re-touches the "
+                 "generated table or record (see sdk/methodology/noise_floor.md §15b, the analysis seam).\n")
 
 from sdk.hor_utils.band_report import BandReport, render_record, render_row, validate  # noqa: E402
 from sdk.hor_utils.resolution import resolution  # noqa: E402
@@ -183,15 +200,16 @@ def analyze(task, spec):
 
 def to_band_report(spec, r):
     d = dict(r)
-    ev = r["eval"]
+    task = r["task"]
     d.update(dict(
         band_supports=None if r["ceiling"] else r["band_supports"],
         observed=r["n_observed"],
         verdict_line=r["verdict"], submit=r["submit"], narrative=spec.get("narrative", {}),
         links=dict(task_url=spec.get("task_url", ""),
                    evals=[{"label": lbl, "url": url} for lbl, url in spec.get("evals", [])],
-                   record=f"tasks/{r['task']}.md",
-                   source_json=(f"analysis/{ev}/band_supports.json" if ev else "")),
+                   record=_REC_LINK.format(task=task),
+                   analysis=_ANALYSIS_LINK.format(task=task),     # stable stub link (the analysis seam)
+                   source_json=_SRC_JSON.format(task=task)),
     ))
     return BandReport.from_dict(d)
 
@@ -199,7 +217,7 @@ def to_band_report(spec, r):
 def main(argv):
     args = argv[1:]
     if "--validate" in args:
-        probs = validate(REPO / "readmes/README_submission.md", REPO / "readmes/tasks")
+        probs = validate(TABLE_PATH, RECORDS_DIR)
         for pr in probs:
             print(f"[{pr.kind}] {pr.task}: {pr.detail}")
         print(f"{len(probs)} problem(s)." if probs else "invariant OK (row <-> record bijection holds).")
@@ -211,22 +229,25 @@ def main(argv):
     for task in keys:
         spec = MANIFEST[task]
         r = analyze(task, spec)
-        if r["eval"]:
-            out = REPO / "analysis" / r["eval"]
-            out.mkdir(parents=True, exist_ok=True)
-            (out / "band_supports.json").write_text(json.dumps(r, indent=2))
+        adir = ANALYSIS_DIR / task
+        adir.mkdir(parents=True, exist_ok=True)
+        (adir / "band_supports.json").write_text(json.dumps(r, indent=2))     # machine record (task-keyed)
+        strat = adir / "STRATEGY.md"
+        if not strat.exists():                                                # human-owned: NEVER overwrite
+            strat.write_text(STRATEGY_STUB.format(task=task))
         if emit:
             report = to_band_report(spec, r)
-            (REPO / "readmes/tasks" / f"{r['task']}.md").write_text(render_record(report))
+            RECORDS_DIR.mkdir(parents=True, exist_ok=True)
+            (RECORDS_DIR / f"{task}.md").write_text(render_record(report))
             rows.append((_grid_key(spec.get("slot", "")),
                          render_row(report) + _knob_cells(spec.get("slot", ""))))
-    if emit and keys == list(MANIFEST):   # full run -> rewrite the single grid-sorted master table in place
-        body = [TABLE_HEADER, TABLE_SEP] + [row for _, row in sorted(rows, key=lambda x: x[0])]
-        _rewrite_table(REPO / "readmes/README_submission.md", body)
         bs = "ceiling" if r["ceiling"] else ("degenerate" if r["band_supports"] is None else f"{r['band_supports']:.2f}")
         print(f"{task:36s} band {r['band'][0]:.3f}-{r['band'][1]:.3f} w={r['width']:.3f} "
               f"sig={r['sigma_abs']:.4f} LSD={r['lsd']:.4f} #obs={r['n_observed']} "
               f"#supports={bs:>7s}  {r['submit']}")
+    if emit and keys == list(MANIFEST):   # full run -> rewrite the single grid-sorted master table in place
+        body = [TABLE_HEADER, TABLE_SEP] + [row for _, row in sorted(rows, key=lambda x: x[0])]
+        _rewrite_table(TABLE_PATH, body)
     return 0
 
 
