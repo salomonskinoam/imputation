@@ -31,9 +31,60 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from sdk.hor_utils.band_report import BandReport, write as write_band_report, validate  # noqa: E402
+from sdk.hor_utils.band_report import BandReport, render_record, render_row, validate  # noqa: E402
 from sdk.hor_utils.resolution import resolution  # noqa: E402
 from tasks_def.band_manifest import MANIFEST  # noqa: E402
+
+# ONE grid-arranged master table: the SDK 8-col block (task first, so band_report.validate still keys on
+# it) with the 4 binary knob columns appended (they cannot precede the SDK block, whose validator reads
+# fixed positions 4/6/7). Rows are sorted by the binary grid so scanning down is the 2x2^3 counting.
+TABLE_HEADER = ("| task | metric | band | spread | #obs / #supports | verdict | submit | links "
+                "| type | #cols | co-amp | dataset |")
+TABLE_SEP = "|" + "---|" * 12
+_TYPE = {"num": 0, "cat": 1}
+_COLS = {"single": 0, "multi": 1}
+_COAMP = {"no": 0, "yes": 1}
+_DSET = {"california": 0, "covertype": 1, "adult": 0, "bank": 1}
+
+
+def _slot_parts(slot):
+    """('num','single','no','california') from 'num/single/no/california'; None if not a clean grid slot."""
+    p = slot.split("/")
+    if len(p) == 4 and "(" not in slot:
+        return p[0], p[1], p[2], p[3].strip()
+    return None
+
+
+def _grid_key(slot):
+    p = _slot_parts(slot)
+    if not p:
+        return (1, slot)   # superseded / extra rows sort after the 16 clean grid cells, alphabetically
+    t, c, a, d = p
+    return (0, _TYPE.get(t, 9), _COLS.get(c, 9), _COAMP.get(a, 9), _DSET.get(d, 9))
+
+
+def _knob_cells(slot):
+    p = _slot_parts(slot)
+    if not p:
+        # keep the coordinate visible for extras (e.g. 'cat/single/yes/adult (superseded)')
+        raw = slot.split("/")
+        raw += [""] * (4 - len(raw))
+        cap = {"num": "Num", "cat": "Cat", "single": "Single", "multi": "Multi", "no": "No", "yes": "Yes"}
+        return " " + " | ".join(cap.get(x.strip(), x.strip()) for x in raw[:4]) + " |"
+    t, c, a, d = p
+    cap = {"num": "Num", "cat": "Cat", "single": "Single", "multi": "Multi", "no": "No", "yes": "Yes"}
+    return f" {cap[t]} | {cap[c]} | {cap[a]} | {d} |"
+
+
+def _rewrite_table(path, body):
+    """Replace the master table block (the '| task ...' header + separator + its contiguous data rows)
+    with `body`, preserving all surrounding prose. Idempotent."""
+    lines = path.read_text().splitlines()
+    start = next(i for i, ln in enumerate(lines) if ln.lstrip().lower().startswith("| task"))
+    end = start
+    while end < len(lines) and lines[end].lstrip().startswith("|"):
+        end += 1
+    path.write_text("\n".join(lines[:start] + body + lines[end:]) + "\n")
 
 Z = 2.0
 FLOOR = 0.02      # imputation skill is baseline-relative (0 = naive); only ~0 runs are degenerate
@@ -156,6 +207,7 @@ def main(argv):
 
     emit = "--emit" in args
     keys = [a for a in args if not a.startswith("--")] or list(MANIFEST)
+    rows = []  # (grid_key, rendered_table_row) for the one merged table
     for task in keys:
         spec = MANIFEST[task]
         r = analyze(task, spec)
@@ -164,7 +216,13 @@ def main(argv):
             out.mkdir(parents=True, exist_ok=True)
             (out / "band_supports.json").write_text(json.dumps(r, indent=2))
         if emit:
-            write_band_report(to_band_report(spec, r), REPO / "readmes/tasks", REPO / "readmes/README_submission.md")
+            report = to_band_report(spec, r)
+            (REPO / "readmes/tasks" / f"{r['task']}.md").write_text(render_record(report))
+            rows.append((_grid_key(spec.get("slot", "")),
+                         render_row(report) + _knob_cells(spec.get("slot", ""))))
+    if emit and keys == list(MANIFEST):   # full run -> rewrite the single grid-sorted master table in place
+        body = [TABLE_HEADER, TABLE_SEP] + [row for _, row in sorted(rows, key=lambda x: x[0])]
+        _rewrite_table(REPO / "readmes/README_submission.md", body)
         bs = "ceiling" if r["ceiling"] else ("degenerate" if r["band_supports"] is None else f"{r['band_supports']:.2f}")
         print(f"{task:36s} band {r['band'][0]:.3f}-{r['band'][1]:.3f} w={r['width']:.3f} "
               f"sig={r['sigma_abs']:.4f} LSD={r['lsd']:.4f} #obs={r['n_observed']} "
