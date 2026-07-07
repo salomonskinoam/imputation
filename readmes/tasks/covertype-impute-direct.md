@@ -1,6 +1,6 @@
 # covertype-impute-direct: band-resolution record
 
-**Verdict: viable: #band_supports = 19.0**
+**Verdict: viable: 4 distinct tiers realized over spread 0.11 (capacity 19.0)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 18.97.
-- viable: #band_supports = 19.0
+- viable: 4 distinct tiers realized over spread 0.11 (capacity 19.0)
 
 ## Strategy (5-solution analysis)
 

@@ -1,6 +1,6 @@
 # california-impute-coamp-single: band-resolution record
 
-**Verdict: viable: #band_supports = 7.5**
+**Verdict: viable: 4 distinct tiers realized over spread 0.11 (capacity 7.5)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 7.46.
-- viable: #band_supports = 7.5
+- viable: 4 distinct tiers realized over spread 0.11 (capacity 7.5)
 
 ## Links
 

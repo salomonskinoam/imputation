@@ -1,6 +1,6 @@
 # covertype-impute-coamp-single: band-resolution record
 
-**Verdict: clustered high, endpoints < 2 LSD apart; covertype recovery is intrinsically convergent**
+**Verdict: only 3 tiers realized (#obs) of the ~12 the test could resolve: a lone low outlier under a converged 0.59-0.61 pack. Rescue re-runs (more test data, harder amputation) both re-converged -> intrinsically sample-dependent, eliminated**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 12.07.
-- clustered high, endpoints < 2 LSD apart; covertype recovery is intrinsically convergent
+- only 3 tiers realized (#obs) of the ~12 the test could resolve: a lone low outlier under a converged 0.59-0.61 pack. Rescue re-runs (more test data, harder amputation) both re-converged -> intrinsically sample-dependent, eliminated
 
 ## Links
 

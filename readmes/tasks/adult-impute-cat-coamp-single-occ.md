@@ -1,6 +1,6 @@
 # adult-impute-cat-coamp-single-occ: band-resolution record
 
-**Verdict: viable: #band_supports = 8.0**
+**Verdict: viable: 3 distinct tiers realized over spread 0.08 (capacity 8.0)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 7.97.
-- viable: #band_supports = 8.0
+- viable: 3 distinct tiers realized over spread 0.08 (capacity 8.0)
 
 ## Strategy (5-solution analysis)
 

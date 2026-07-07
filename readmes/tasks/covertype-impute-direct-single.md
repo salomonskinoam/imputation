@@ -1,6 +1,6 @@
 # covertype-impute-direct-single: band-resolution record
 
-**Verdict: viable: #band_supports = 17.5**
+**Verdict: WORKS (clustered): band 0.62-0.71; only the endpoints are on record (full run set not downloaded)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 17.45.
-- viable: #band_supports = 17.5
+- WORKS (clustered): band 0.62-0.71; only the endpoints are on record (full run set not downloaded)
 
 ## Links
 

@@ -1,6 +1,6 @@
 # adult-impute-cat-coamp-multi-mild: band-resolution record
 
-**Verdict: viable: #band_supports = 7.1**
+**Verdict: viable: 4 distinct tiers realized over spread 0.08 (capacity 7.1)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 7.12.
-- viable: #band_supports = 7.1
+- viable: 4 distinct tiers realized over spread 0.08 (capacity 7.1)
 
 ## Strategy (5-solution analysis)
 

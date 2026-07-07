@@ -1,6 +1,6 @@
 # covertype-impute-coamp-multi: band-resolution record
 
-**Verdict: narrow cluster; covertype's redundant residual lets all strong models converge**
+**Verdict: tight pack ~0.29 (width 0.04) with one high outlier; rescue re-runs stayed converged -> covertype's redundant residual gives intrinsically low separation, eliminated**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 7.33.
-- narrow cluster; covertype's redundant residual lets all strong models converge
+- tight pack ~0.29 (width 0.04) with one high outlier; rescue re-runs stayed converged -> covertype's redundant residual gives intrinsically low separation, eliminated
 
 ## Links
 

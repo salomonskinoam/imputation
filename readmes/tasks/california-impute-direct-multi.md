@@ -1,6 +1,6 @@
 # california-impute-direct-multi: band-resolution record
 
-**Verdict: viable: #band_supports = 27.1**
+**Verdict: WORKS (widest numeric band): 0.40-0.60; only the endpoints are on record (full run set not downloaded)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 27.08.
-- viable: #band_supports = 27.1
+- WORKS (widest numeric band): 0.40-0.60; only the endpoints are on record (full run set not downloaded)
 
 ## Links
 

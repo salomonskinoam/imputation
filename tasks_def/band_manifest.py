@@ -37,7 +37,8 @@ MANIFEST = {
     "covertype-impute-direct-single": dict(
         cfg="tasks_def.configs.covertype_direct_single", npz="worlds/imputation/data/covertype.npz",
         eval="", slot="num/single/no/covertype", band_note="(endpoints only, not downloaded)",
-        scores=[0.62, 0.71],
+        scores=[0.62, 0.71], submit="**YES** (clustered)",
+        verdict_line="WORKS (clustered): band 0.62-0.71; only the endpoints are on record (full run set not downloaded)",
         task_url=_T+"6ed892d5-8d1b-49f2-b70e-df65a6957813", evals=[]),
     "california-impute-coamp-single": dict(
         cfg="tasks_def.configs.california_coamp_single", npz="worlds/imputation/data/california.npz",
@@ -48,12 +49,15 @@ MANIFEST = {
         cfg="tasks_def.configs.covertype_coamp_single", npz="worlds/imputation/data/covertype.npz",
         eval="63093dca-ac27-48ad-891b-b0485a5c4d63", slot="num/single/yes/covertype",
         scores=[0.5330, 0.5928, 0.6094, 0.6096, 0.6104], submit="NO (clustered)",
-        verdict_line="clustered high, endpoints < 2 LSD apart; covertype recovery is intrinsically convergent",
+        verdict_line="only 3 tiers realized (#obs) of the ~12 the test could resolve: a lone low outlier "
+                     "under a converged 0.59-0.61 pack. Rescue re-runs (more test data, harder amputation) "
+                     "both re-converged -> intrinsically sample-dependent, eliminated",
         task_url=_T+"d6237f92-5541-495d-a90e-25316f0247b1", evals=[("eval", _E+"63093dca-ac27-48ad-891b-b0485a5c4d63")]),
     "california-impute-direct-multi": dict(
         cfg="tasks_def.configs.california_direct_multi", npz="worlds/imputation/data/california.npz",
         eval="", slot="num/multi/no/california", band_note="(endpoints only, not downloaded)",
-        scores=[0.40, 0.60],
+        scores=[0.40, 0.60], submit="**YES**",
+        verdict_line="WORKS (widest numeric band): 0.40-0.60; only the endpoints are on record (full run set not downloaded)",
         task_url=_T+"596e923b-bb5d-4dd8-af48-19a2227c0ee0", evals=[]),
     "covertype-impute-direct": dict(
         cfg="tasks_def.configs.covertype_direct", npz="worlds/imputation/data/covertype.npz",
@@ -74,7 +78,8 @@ MANIFEST = {
         cfg="tasks_def.configs.covertype_coamp_multi", npz="worlds/imputation/data/covertype.npz",
         eval="5114329d-9b82-4d24-8759-5cf8031a7f44", slot="num/multi/yes/covertype",
         scores=[0.2877, 0.2882, 0.2906, 0.3002, 0.3290], submit="NO (clustered)",
-        verdict_line="narrow cluster; covertype's redundant residual lets all strong models converge",
+        verdict_line="tight pack ~0.29 (width 0.04) with one high outlier; rescue re-runs stayed converged "
+                     "-> covertype's redundant residual gives intrinsically low separation, eliminated",
         task_url=_T+"9e443879-143e-43f7-a6cb-6c57bdb03239", evals=[("eval", _E+"5114329d-9b82-4d24-8759-5cf8031a7f44")]),
 
     # ── Categorical · Adult / Bank ─────────────────────────────────────────────────

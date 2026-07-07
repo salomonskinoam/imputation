@@ -27,7 +27,7 @@
   "n_failed": 0,
   "n_test": 0,
   "n_classes": 0,
-  "verdict": "viable: #band_supports = 7.5",
+  "verdict": "viable: 4 distinct tiers realized over spread 0.11 (capacity 7.5)",
   "submit": "**YES**",
   "eval": "0253d895-67be-40b9-a006-15d66a821a7f"
 }

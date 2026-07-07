@@ -27,7 +27,7 @@
   "n_failed": 0,
   "n_test": 0,
   "n_classes": 0,
-  "verdict": "narrow cluster; covertype's redundant residual lets all strong models converge",
+  "verdict": "tight pack ~0.29 (width 0.04) with one high outlier; rescue re-runs stayed converged -> covertype's redundant residual gives intrinsically low separation, eliminated",
   "submit": "NO (clustered)",
   "eval": "5114329d-9b82-4d24-8759-5cf8031a7f44"
 }

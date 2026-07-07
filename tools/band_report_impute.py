@@ -102,14 +102,18 @@ def analyze(task, spec):
         band_supports, lsd = float(res["tiers"]), float(res["lsd"])
     observed = _observed_levels(band_scores, lsd if lsd else 0.0)
 
+    # Verdict leads with REALIZED spread (observable), not the sampling-noise capacity (which the static
+    # ruler inflates); #band_supports is shown as the capacity ceiling in the table's #obs/#supports cell.
     if degenerate:
         auto_verdict, auto_submit = "FLOORED (runs at the naive baseline)", "NO (floored)"
     elif ceiling:
         auto_verdict, auto_submit = "CEILING (Method B invalid; needs the gap test)", "NO"
-    elif band_supports >= 3.0:
-        auto_verdict, auto_submit = f"viable: #band_supports = {band_supports:.1f}", "**YES**"
+    elif observed >= 3 and band_supports >= 3.0:
+        auto_verdict = f"viable: {observed} distinct tiers realized over spread {width:.2f} (capacity {band_supports:.1f})"
+        auto_submit = "**YES**"
     else:
-        auto_verdict, auto_submit = f"below the 3-tier bar: #band_supports = {band_supports:.1f}", "NO"
+        auto_verdict = f"below the bar: {observed} tiers realized, spread {width:.2f} (capacity {band_supports:.1f})"
+        auto_submit = "NO"
 
     return dict(
         task=task, metric="recovery",

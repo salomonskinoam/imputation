@@ -1,6 +1,6 @@
 # bank-impute-cat-multi: band-resolution record
 
-**Verdict: viable: #band_supports = 7.6**
+**Verdict: viable: 3 distinct tiers realized over spread 0.08 (capacity 7.6)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 7.64.
-- viable: #band_supports = 7.6
+- viable: 3 distinct tiers realized over spread 0.08 (capacity 7.6)
 
 ## Links
 
