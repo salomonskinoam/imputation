@@ -149,5 +149,11 @@ def _container_score() -> dict:
 
 
 def test_solution_scored():
+    """Grade the student's imputed artifacts and assert the output gate passed.
+
+    Checks the deliverable is well-formed (both arrays present, right shape, finite, no NaN) so a
+    malformed submission fails loudly instead of scoring 0 silently. The recovery/macro-F1 value
+    itself is reported by the grader from the JSON result; this only guards the artifact contract.
+    """
     res = _container_score()
     assert res["gate_ok"], res["reason"]

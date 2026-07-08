@@ -3,7 +3,7 @@ prompt: |
 
 metadata:
   difficulty: "medium"
-  category: "imputation"
+  category: "machine learning"
   tags:
     - imputation
     - missing-data
