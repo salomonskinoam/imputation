@@ -1,6 +1,6 @@
 # bank-impute-cat-coamp-multi-mild: band-resolution record
 
-**Verdict: viable: 3 distinct tiers realized over spread 0.05 (capacity 5.3)**
+**Verdict: viable (moderate confidence): strategy diversity, RandomForest beats HistGradientBoosting on a 2-vs-3 split; spread 0.05 hugs the floor so some coincidence risk (capacity 5.3)**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 5.26.
-- viable: 3 distinct tiers realized over spread 0.05 (capacity 5.3)
+- viable (moderate confidence): strategy diversity, RandomForest beats HistGradientBoosting on a 2-vs-3 split; spread 0.05 hugs the floor so some coincidence risk (capacity 5.3)
 
 ## Links
 

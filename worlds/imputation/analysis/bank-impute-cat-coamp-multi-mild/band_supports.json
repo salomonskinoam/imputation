@@ -27,7 +27,7 @@
   "n_failed": 0,
   "n_test": 0,
   "n_classes": 0,
-  "verdict": "viable: 3 distinct tiers realized over spread 0.05 (capacity 5.3)",
+  "verdict": "viable (moderate confidence): strategy diversity, RandomForest beats HistGradientBoosting on a 2-vs-3 split; spread 0.05 hugs the floor so some coincidence risk (capacity 5.3)",
   "submit": "**YES**",
   "eval": "f834e331-1ae0-4063-b789-8cbc4193cb4a"
 }

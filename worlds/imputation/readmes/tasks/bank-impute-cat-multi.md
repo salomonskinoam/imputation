@@ -1,6 +1,6 @@
 # bank-impute-cat-multi: band-resolution record
 
-**Verdict: viable: 3 distinct tiers realized over spread 0.08 (capacity 7.6)**
+**Verdict: luck near the floor: spread 0.08 is mostly seed-luck (3 mid runs within 0.008 + one high outlier), not a skill gradient; capacity 7.6 overstates realized spread**
 
 ## Band
 
@@ -24,7 +24,7 @@
 
 - Rule: #band_supports >= 3 = SUBMIT-viable; <= 2 = REJECT (at the ceiling, the gap test decides).
 - #band_supports = 7.64.
-- viable: 3 distinct tiers realized over spread 0.08 (capacity 7.6)
+- luck near the floor: spread 0.08 is mostly seed-luck (3 mid runs within 0.008 + one high outlier), not a skill gradient; capacity 7.6 overstates realized spread
 
 ## Links
 

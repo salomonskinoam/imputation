@@ -31,10 +31,10 @@ MANIFEST = {
         task_url=_T+"76263f44-25bb-48a4-82f1-6383a214e8f8", evals=[("eval", _E+"41ae826f-3fec-4b9a-938e-bbcbd0e225df")]),
     "covertype-impute-direct-single": dict(
         cfg="tasks_def.configs.covertype_direct_single", npz="worlds/imputation/data/covertype.npz",
-        eval="", slot="num/single/no/covertype", band_note="(endpoints only, not downloaded)",
-        scores=[0.62, 0.71], submit="**YES** (clustered)",
-        verdict_line="WORKS (clustered): band 0.62-0.71; only the endpoints are on record (full run set not downloaded)",
-        task_url=_T+"6ed892d5-8d1b-49f2-b70e-df65a6957813", evals=[]),
+        eval="6ce009ad-9656-4c22-8562-b0447e705265", slot="num/single/no/covertype",
+        scores=[0.6201, 0.6228, 0.7014, 0.7025, 0.7053], submit="**YES** (clustered)",
+        verdict_line="WORKS (clustered): band 0.62-0.71, a 2-vs-3 split; real skill gradient, transductive train+test pooling separates the clusters",
+        task_url=_T+"6ed892d5-8d1b-49f2-b70e-df65a6957813", evals=[("eval", _E+"6ce009ad-9656-4c22-8562-b0447e705265")]),
     "california-impute-coamp-single": dict(
         cfg="tasks_def.configs.california_coamp_single", npz="worlds/imputation/data/california.npz",
         eval="0253d895-67be-40b9-a006-15d66a821a7f", slot="num/single/yes/california",
@@ -50,10 +50,10 @@ MANIFEST = {
         task_url=_T+"d6237f92-5541-495d-a90e-25316f0247b1", evals=[("eval", _E+"63093dca-ac27-48ad-891b-b0485a5c4d63")]),
     "california-impute-direct-multi": dict(
         cfg="tasks_def.configs.california_direct_multi", npz="worlds/imputation/data/california.npz",
-        eval="", slot="num/multi/no/california", band_note="(endpoints only, not downloaded)",
-        scores=[0.40, 0.60], submit="**YES**",
-        verdict_line="WORKS (widest numeric band): 0.40-0.60; only the endpoints are on record (full run set not downloaded)",
-        task_url=_T+"596e923b-bb5d-4dd8-af48-19a2227c0ee0", evals=[]),
+        eval="cdb91691-0e32-49fa-a58f-42218dc0f062", slot="num/multi/no/california",
+        scores=[0.4033, 0.4608, 0.5684, 0.5745, 0.6005], submit="**YES**",
+        verdict_line="WORKS (widest numeric band): 0.40-0.60, evenly spread; real skill gradient, transductive pooling of the per-column fit",
+        task_url=_T+"596e923b-bb5d-4dd8-af48-19a2227c0ee0", evals=[("eval", _E+"cdb91691-0e32-49fa-a58f-42218dc0f062")]),
     "covertype-impute-direct": dict(
         cfg="tasks_def.configs.covertype_direct", npz="worlds/imputation/data/covertype.npz",
         eval="c56b6c86-36e5-45da-9f9b-8d40ae038f2b", slot="num/multi/no/covertype",
@@ -106,6 +106,8 @@ MANIFEST = {
         cfg="tasks_def.configs.bank_cat_multi", npz="worlds/imputation/data/bank.npz",
         eval="175c88fc-d0ca-41e6-ad7f-30bdcdcfd22a", slot="cat/multi/no/bank",
         scores=[0.1419, 0.1899, 0.1903, 0.1975, 0.2269],
+        submit="NO (luck)",
+        verdict_line="luck near the floor: spread 0.08 is mostly seed-luck (3 mid runs within 0.008 + one high outlier), not a skill gradient; capacity 7.6 overstates realized spread",
         task_url=_T+"f38b591d-24f3-438a-8f52-db48b286c6ea", evals=[("eval", _E+"175c88fc-d0ca-41e6-ad7f-30bdcdcfd22a")]),
     "adult-impute-cat-coamp-multi-mild": dict(
         cfg="tasks_def.configs.adult_cat_coamp_multi_mild", npz="worlds/imputation/data/adult.npz",
@@ -116,6 +118,8 @@ MANIFEST = {
         cfg="tasks_def.configs.bank_cat_coamp_multi_mild", npz="worlds/imputation/data/bank.npz",
         eval="f834e331-1ae0-4063-b789-8cbc4193cb4a", slot="cat/multi/yes/bank",
         scores=[0.0645, 0.0663, 0.1024, 0.109, 0.119],
+        submit="**YES**",
+        verdict_line="viable (moderate confidence): strategy diversity, RandomForest beats HistGradientBoosting on a 2-vs-3 split; spread 0.05 hugs the floor so some coincidence risk (capacity 5.3)",
         task_url=_T+"aaf3e2af-455c-41cd-ad9d-b622be25f6d6", evals=[("eval", _E+"f834e331-1ae0-4063-b789-8cbc4193cb4a")]),
 
     # ── Superseded / documented dead-ends (real evals, kept for the record) ─────────

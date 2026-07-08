@@ -2,29 +2,32 @@
   "task": "covertype-impute-direct-single",
   "metric": "recovery",
   "band": [
-    0.62,
-    0.71
+    0.6201,
+    0.7053
   ],
-  "band_note": "(endpoints only, not downloaded)",
-  "width": 0.08999999999999997,
-  "mid": 0.665,
+  "band_note": "",
+  "width": 0.08520000000000005,
+  "mid": 0.6627000000000001,
   "scores_sorted": [
-    0.62,
-    0.71
+    0.6201,
+    0.6228,
+    0.7014,
+    0.7025,
+    0.7053
   ],
-  "sigma_abs": 0.0019341234017852462,
-  "lsd": 0.005470527092215765,
-  "band_supports": 17.45179677988701,
+  "sigma_abs": 0.0019474024579766074,
+  "lsd": 0.005508085934938439,
+  "band_supports": 16.468168254160013,
   "n_observed": 2,
   "ceiling": false,
   "gap": {},
   "sigma_source": "static offline resolution: N=15000 scored cells/target (rate*n_test) + per-target class/dispersion structure; NO prediction resample",
-  "n_runs": 2,
-  "n_nondegenerate": 2,
+  "n_runs": 5,
+  "n_nondegenerate": 5,
   "n_failed": 0,
   "n_test": 0,
   "n_classes": 0,
-  "verdict": "WORKS (clustered): band 0.62-0.71; only the endpoints are on record (full run set not downloaded)",
+  "verdict": "WORKS (clustered): band 0.62-0.71, a 2-vs-3 split; real skill gradient, transductive train+test pooling separates the clusters",
   "submit": "**YES** (clustered)",
-  "eval": ""
+  "eval": "6ce009ad-9656-4c22-8562-b0447e705265"
 }

@@ -27,7 +27,7 @@
   "n_failed": 0,
   "n_test": 0,
   "n_classes": 0,
-  "verdict": "viable: 3 distinct tiers realized over spread 0.08 (capacity 7.6)",
-  "submit": "**YES**",
+  "verdict": "luck near the floor: spread 0.08 is mostly seed-luck (3 mid runs within 0.008 + one high outlier), not a skill gradient; capacity 7.6 overstates realized spread",
+  "submit": "NO (luck)",
   "eval": "175c88fc-d0ca-41e6-ad7f-30bdcdcfd22a"
 }
